@@ -1,0 +1,112 @@
+1. Vorbereitungen
+20
+
+<div class="row">
+  <div class="columns large-8">
+  <ul class="large-block-grid-2 clearing-thumbs" data-clearing>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/led-cube/led-cube.jpg">
+      <img src="/assets/electronics/led-cube/led-cube.jpg" alt="LED-Würfel" data-caption="LED-Würfel" />
+    </a>
+  </li>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/led-cube/preparations-top-2.jpg">
+      <img src="/assets/electronics/led-cube/preparations-top-2.jpg" alt="Montierter LED-Würfel" data-caption="Montierter LED-Würfel" />
+    </a>
+  </li>
+  </ul>
+  </div>
+  <div class="columns large-4">
+  <ul class="large-block-grid-1">
+  <li class="no-margin">
+    <a class="th" href="/electronics/led-cube/demo-videos/">
+      <img src="/assets/electronics/led-cube/demo-videos.jpg" />
+    </a>
+  </li>
+  </ul>
+  </div>
+</div>
+
+<div class="row">
+  <p>
+  <big><strong>Ein 4x4x4-LED-Würfel im Eigenbau</strong></big>
+  </p>
+  <div class="row">
+    <div class="large-4 columns">
+	  <ul class="large-block-grid-1 clearing-thumbs" data-clearing>
+        <li>
+          <a class="th" href="/assets/electronics/led-cube/preparations-1.jpg">
+	        <img src="/assets/electronics/led-cube/preparations-1.jpg" alt="Anschluss des LED-Würfels an das Arduino Leonardo" data-caption="Anschluss des LED-Würfels an das Arduino Leonardo" />
+	      </a>
+        </li>
+		<li>
+          <a class="th" href="/assets/electronics/led-cube/preparations-2.jpg">
+	        <img src="/assets/electronics/led-cube/preparations-2.jpg" alt="links: diffus, rechts: klar, LEDs aus" data-caption="links: diffus, rechts: klar, LEDs aus" />
+	      </a>
+        </li>
+		<li>
+          <a class="th" href="/assets/electronics/led-cube/preparations-3.jpg">
+	        <img src="/assets/electronics/led-cube/preparations-3.jpg" alt="links: diffus, rechts: klar, LEDs an" data-caption="links: diffus, rechts: klar, LEDs an" />
+	      </a>
+        </li>
+      </ul>
+    </div>
+	<div class="large-8 columns justify">
+	<p>
+	Der LED-Würfel ist eines der beliebtesten "Selbstbau-Gadgets". Allein die Google-Suche nach 
+	"<a href="https://www.google.de/search?q=led+cube" target="_blank">led cube</a>" ergibt über 15 Millionen Suchergebnisse - angeführt von der 
+	<a href="http://www.youtube.com/watch?v=6mXM-oGggrM" target="_blank">Demo eines 8x8x8-Würfels</a>.
+	</p>
+	<p>
+	Konstruktion & Programmierung bieten zusammen unzählige Möglichkeiten: Angefangen bei Countdowns und Laufschriften bis hin zu komplexen Animationen. 
+	Aber auch interaktivere Projekte sind möglich: Ein 3D-Equalizer, der per Mikrofon die Umgebungslautstärke visualisiert oder mit einem MIDI-Keyboard
+	verbunden ist; sogar Computerspiele lassen sich umsetzen - ich denke da an <a href="http://stewd.io/pong/" target="_blank">Pong</a> oder 
+	<a href="http://neave.com/snake/" target="_blank">Snake</a>.
+	</p>
+	<p>
+	Wenn du selbst einen LED-Würfel bauen möchtest, solltest du dir zunächst die Frage stellen, wie groß soll der Würfel werden soll. 
+	Für den Anfang ist z.B. ein 3x3x3-Cube geeignet. Das bedeutet, dass der Würfel 3 LEDs breit, hoch und tief ist, man braucht insgesamt also 3*3*3 = 27 LEDs.
+	Die Möglichkeiten mit einem 3x3x3-Würfel sind natürlich immer noch nicht mit einem 8er- oder 16er-Würfel zu vergleichen, für die aber auch viel mehr
+	LEDs nötig sind: Bei 8*8*8 = 512 LEDs oder 16*16*16 = 4096 LEDs ist nicht nur der Aufwand, sondern auch der Preis sehr hoch.
+	</p>
+	<p>
+	Die Größe des Würfels ist außerdem wichtig für die spätere Ansteuerung. Das 
+	<a href="http://arduino.cc/en/Main/arduinoBoardLeonardo" target="_blank">Arduino Leonardo</a>-Board, das ich verwende, hat 14 digitale + 6 analoge = 
+	20 Anschlusspins. Durch Multiplexing (dazu später mehr) kann man einen 4x4x4-Cube mit 20 Leitungen steuern, dafür eignet sich ein Arduino also recht gut
+	(das gilt auch für 3x3x3 mit 12 Leitungen). Falls du aber mehr als 4x4x4 LEDs willst, reichen die Pins des Arduinos nicht mehr aus. 
+	Dann gibt es mehrere Möglichkeiten: Du kannst einfach ein größeres Board benutzen, z.B. ein 
+	<a href="http://arduino.cc/en/Main/arduinoBoardMega" target="_blank">Arduino Mega</a>, oder du benutzt Pin-erweiternde Module wie Schieberegister,
+	was den Schaltplan und das Löten komplizierter macht.
+	</p>
+	<p>
+	Ich habe mich für einen 4x4x4-Cube (64 LEDs) entschieden. Jetzt geht es an die benötigten Materialien. Beim Kauf der LEDs solltest
+	du dir sehr genau überlegen, ob du klare oder diffuse LEDs kaufen möchtest. Klare LEDs strahlen sehr stark nach oben hinaus, aber nur schwach an den Seiten,
+	während diffuse LEDs überall gleich stark strahlen. Den Unterschied kannst du am besten im Bild sehen. Diffuse LEDs sehen beim LED-Würfel wesentlich besser
+	aus, sind aber auch teurer. Alternativ kannst du auch klare LEDs kaufen und diese dann mit Schleifpapier abschleifen. Dadurch wird das Licht in der LED 
+	"gefangen" und der Abstrahlwinkel erhöht. Ich habe 70 klare LEDs gekauft und diese dann mit 400-Schleifpapier geschliffen - was ich nicht empfehlen kann,
+	weil es sehr lange dauert und umständlich ist.
+	</p>
+	<p>
+	Ansonsten brauchst du die "Standard"-Materialien: Lötausrüstung, Draht, Litze, Schrumpfschlauch, Stiftleiste. Zur Befestigung des Würfels kannst du eine
+	Lochrasterplatine mit M4-Schrauben und -Distanzhülsen benutzen. Für die Schaltung sind zusätzlich noch 4 NPN-Transistoren und 16 Widerstände nötig. 
+	Hier einige Bauteile bei <a href="http://reichelt.de" target="_blank">Reichelt</a>: 
+	1x <a href="http://www.reichelt.de/?ARTICLE=125561" target="_blank">ARDUINO LEONARDO</a>, 
+	64x <a href="http://www.reichelt.de/?ARTICLE=96902" target="_blank">LED 5-12000 BL</a>, 
+	1x <a href="http://www.reichelt.de/?ARTICLE=10298" target="_blank">LITZE SW</a>, 
+	1x <a href="http://www.reichelt.de/?ARTICLE=17406" target="_blank">SDH 3,2 SW</a>, 
+	1x <a href="http://www.reichelt.de/?ARTICLE=19506" target="_blank">SL 1X40G 2,54</a>, 
+	1x <a href="http://www.reichelt.de/?ARTICLE=8270" target="_blank">H25PR100</a>, 
+	4x <a href="http://www.reichelt.de/?ARTICLE=5007" target="_blank">BC 547C</a>, 
+	16x <a href="http://www.reichelt.de/?ARTICLE=1336" target="_blank">1/4W 100</a>, 
+	1x <a href="http://www.reichelt.de/?ARTICLE=65757" target="_blank">SKL M4X16-50</a>, 
+	4x <a href="http://www.reichelt.de/?ARTICLE=44774" target="_blank">DI4 15MM</a>.
+	</p>
+	<p>
+	Im nächsten Teil geht es um die Konstruktion des eigentlichen Würfels mit einer selbstgebauten Schablone.
+	</p>
+	<p>
+	<strong><i>Teil 2: Konstruktion</i> in Arbeit!</strong>
+	</p>
+    </div>
+  </div>
+</div>

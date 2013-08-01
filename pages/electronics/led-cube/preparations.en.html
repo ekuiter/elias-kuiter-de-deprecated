@@ -1,0 +1,103 @@
+1. Preparations
+20
+
+<div class="row">
+  <div class="columns large-8">
+  <ul class="large-block-grid-2 clearing-thumbs" data-clearing>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/led-cube/led-cube.jpg">
+      <img src="/assets/electronics/led-cube/led-cube.jpg" alt="LED cube" data-caption="LED cube" />
+    </a>
+  </li>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/led-cube/preparations-top-2.jpg">
+      <img src="/assets/electronics/led-cube/preparations-top-2.jpg" alt="Mounted LED cube" data-caption="Mounted LED cube" />
+    </a>
+  </li>
+  </ul>
+  </div>
+  <div class="columns large-4">
+  <ul class="large-block-grid-1">
+  <li class="no-margin">
+    <a class="th" href="/electronics/led-cube/demo-videos/en">
+      <img src="/assets/electronics/led-cube/demo-videos.jpg" />
+    </a>
+  </li>
+  </ul>
+  </div>
+</div>
+
+<div class="row">
+  <p>
+  <big><strong>A self-built 4x4x4 LED cube</strong></big>
+  </p>
+  <div class="row">
+    <div class="large-4 columns">
+	  <ul class="large-block-grid-1 clearing-thumbs" data-clearing>
+        <li>
+          <a class="th" href="/assets/electronics/led-cube/preparations-1.jpg">
+	        <img src="/assets/electronics/led-cube/preparations-1.jpg" alt="Connecting the LED cube to the Arduino Leonardo" data-caption="Connecting the LED cube to the Arduino Leonardo" />
+	      </a>
+        </li>
+		<li>
+          <a class="th" href="/assets/electronics/led-cube/preparations-2.jpg">
+	        <img src="/assets/electronics/led-cube/preparations-2.jpg" alt="left: diffused, right: clear, LEDs off" data-caption="left: diffused, right: clear, LEDs off" />
+	      </a>
+        </li>
+		<li>
+          <a class="th" href="/assets/electronics/led-cube/preparations-3.jpg">
+	        <img src="/assets/electronics/led-cube/preparations-3.jpg" alt="left: diffused, right: clear, LEDs on" data-caption="left: diffused, right: clear, LEDs on" />
+	      </a>
+        </li>
+      </ul>
+    </div>
+	<div class="large-8 columns justify">
+	<p>
+	The do-it-yourself LED cube is a classic combining tricky construction and smart programming. Why is it that fascinating? Because there are plenty
+	of possibilities: Starting with countdowns and tickers up to complex animations (like in this 
+	<a href="http://www.youtube.com/watch?v=6mXM-oGggrM" target="_blank">awesome 8x8x8 cube demo</a>). But you can also build more interactive projects: 
+	A 3D equalizer that visualizes volume with a microphone  or is connected to a MIDI keyboard; even games can be implemented - I'm thinking of 
+	<a href="http://stewd.io/pong/" target="_blank">Pong</a> or <a href="http://neave.com/snake/" target="_blank">Snake</a>.
+	</p>
+	<p>
+	You have decided to build an LED cube? Great, then let's think about the size. For starters e.g. a 3x3x3 cube is suitable, that means the cube is 
+	3 LEDs wide, high and deep, so you need 3*3*3 = 27 LEDs in total. Of course you can't compare the display 'quality' with an 8^3 or 16^3, but for 
+	those you also need far more LEDs: An 8*8*8 = 512 or 16*16*16 = 4096 LED cube is not only really expensive but also requires enormous effort to solder.
+	</p>
+	<p>
+	The cube size also plays a decisive role for cube control. The <a href="http://arduino.cc/en/Main/arduinoBoardLeonardo" target="_blank">Arduino Leonardo</a>
+	I'm using here has 14 digital + 6 analog = 20 pins. With a technique called Multiplexing (more on this later) a 4x4x4 cube can be controlled with 20 wires,
+	so the Leonardo is perfectly suited. If you want more than 4^3 LEDs you run into problems because you need more than 20 pins - but the Uno/Leonardo has 
+	only 20 pins. Now you have two basic choices: Use a bigger board like the 
+	<a href="http://arduino.cc/en/Main/arduinoBoardMega" target="_blank">Arduino Mega</a> or pin-expanding methods like shift registers 
+	(what makes the circuit diagram and soldering more complicated). I chose the 4x4x4 cube (64 LEDs) because it's relatively simple to build and control.
+	</p>
+	<p>
+	Now go get the required components. You should think twice whether you buy diffused or clear LEDs. Clear LEDs gleam very intense on the top but only
+	slightly on the sides, whereas diffused LEDs gleam equally to all directions (see picture). Especially for an LED cube I think diffused LEDs look much 
+	better, but they are also more expensive. Alternatively you can buy clear LEDs and sand them with sand paper: The light then is 'trapped' in the LED 
+	and the beam angle increases. I bought 70 clear LEDs and sanded them with 400G sand paper, but I can't really recommend it because it takes long, is
+	laborious and requires much patience.
+	</p>
+	<p>
+	Apart from that you need basically the normal material: Soldering equipment, (stranded) wire, shrink tubing, pin strip. For mounting the cube you can 
+	use a perfboard with M4 screws and threaded spacers. For the circuit you also need 4 NPN transistors and 16 resistors. Here's a list of the components
+	I bought from the German online shop <a href="http://reichelt.de/" target="_blank">Reichelt</a>, you can use these as a suggestion: 
+	1x <a href="http://www.reichelt.de/?ARTICLE=125561" target="_blank">ARDUINO LEONARDO</a>, 
+	64x <a href="http://www.reichelt.de/?ARTICLE=96902" target="_blank">LED 5-12000 BL</a>, 
+	1x <a href="http://www.reichelt.de/?ARTICLE=10298" target="_blank">LITZE SW</a>, 
+	1x <a href="http://www.reichelt.de/?ARTICLE=17406" target="_blank">SDH 3,2 SW</a>, 
+	1x <a href="http://www.reichelt.de/?ARTICLE=19506" target="_blank">SL 1X40G 2,54</a>, 
+	1x <a href="http://www.reichelt.de/?ARTICLE=8270" target="_blank">H25PR100</a>, 
+	4x <a href="http://www.reichelt.de/?ARTICLE=5007" target="_blank">BC 547C</a>, 
+	16x <a href="http://www.reichelt.de/?ARTICLE=1336" target="_blank">1/4W 100</a>, 
+	1x <a href="http://www.reichelt.de/?ARTICLE=65757" target="_blank">SKL M4X16-50</a>, 
+	4x <a href="http://www.reichelt.de/?ARTICLE=44774" target="_blank">DI4 15MM</a>.	</p>
+	<p>
+	The next part will be about constructing the actual LED cube with a little template I built. 
+	</p>
+	<p>
+	<strong><i>Part 2: Construction</i> coming soon!</strong>
+    </div>
+  </div>
+</div>

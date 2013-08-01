@@ -1,0 +1,111 @@
+The Arduino platform
+10
+
+<div class="row">
+  <ul class="large-block-grid-3 clearing-thumbs" data-clearing>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/arduino-platform1.jpg">
+      <img src="/assets/electronics/arduino-platform1.jpg" alt="Arduino board" data-caption="Arduino board" />
+    </a>
+  </li>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/arduino-platform2.jpg">
+      <img src="/assets/electronics/arduino-platform2.jpg" alt="LEDs" data-caption="LEDs" />
+    </a>
+  </li>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/arduino-platform3.jpg">
+      <img src="/assets/electronics/arduino-platform3.jpg" alt="Shift registers" data-caption="Shift registers" />
+    </a>
+  </li>
+  </ul>
+</div>
+
+<div class="row">
+  <p>
+  <big><strong>An introduction to the Arduino platform</strong></big>
+  </p>
+  <div class="row">
+    <div class="large-4 columns">
+	  <ul class="large-block-grid-1 clearing-thumbs" data-clearing>
+        <li>
+          <a class="th" href="/assets/electronics/arduino-platform4.jpg">
+	        <img src="/assets/electronics/arduino-platform4.jpg" alt="Different microcontrollers by Atmel" data-caption="Different microcontrollers by Atmel" />
+	      </a>
+        </li>
+		<li>
+          <a class="th" href="/assets/electronics/arduino-platform5.png">
+	        <img src="/assets/electronics/arduino-platform5.png" alt="Programming with Arduino" data-caption="Programming with Arduino" />
+	      </a>
+        </li>
+		<li>
+          <a class="th" href="/assets/electronics/arduino-platform6.gif">
+	        <img src="/assets/electronics/arduino-platform6.gif" alt="The blink sketch in action" data-caption="The blink sketch in action" />
+	      </a>
+        </li>
+      </ul>
+    </div>
+	<div class="large-8 columns justify">
+	<p>
+    A few months ago, I discovered the <a href="http://arduino.cc" target="_blank">Arduino platform</a>:
+	In short, it's a prototyping board with a microcontroller with that you can develop electronic circuits easily and fast -
+	even if you're new to programming.<br />
+    This may be a little abstract - so let me give some examples. With an Arduino board you can  ...
+    <ul>
+	  <li>read in sensor data like temperature, acceleration, angle, compass, microphone, ultrasonic sound, and many, many more</li>
+	  <li>then process these values and use them for controlling an output device like simple LEDs, motors, speakers, LCD display etc.</li>
+	  <li>use more advanced technology like Ethernet, WLAN, GSM, Bluetooth, ... to transmit information over the Internet</li>
+	  <li>be creative and combine the above as you like to create something completely new</li>
+    </ul>
+    Let's begin with the core of any Arduino board - the microcontroller.
+    </p>
+    <h5>What is a microcontroller?</h5>
+	<p>
+    A microcontroller (also called µC or uC) is a 'little' version of current computer processors: It executes a program that e.g. controls
+	electronic devices or polls sensors. In contrast to a CPU, a µC has an additional RAM chip for temporary data, a flash memory that contains
+	a program and other peripherals. For example, the µC of the Arduino Leonardo (which I use at the moment) has an own USB chip that can 
+	communicate directly with the computer.
+    </p>
+    <h5>The first sketch - Hello <del>World</del> Blink</h5>
+	<p>
+    For uploading a program to a µC there are expensive devices called <em>programmers</em>. Luckily Arduino goes another way: 
+	Just connect your board with a micro USB cable to your computer. Every Samsung user should have such a cable =)
+    For programming, there's a software called - who would have thought - <a href="http://arduino.cc/en/Main/Software" target="_blank">Arduino</a>.
+	In Arduino you write <em>sketches</em>, not programs, which can then be uploaded to your board. The programming language is <em>Wiring</em>,
+	a framework for C++, which is predestined for low-level programming. Additionally <em>Wiring</em> hides many details of the underlying hardware.
+	A simple first sketch could look like this:
+	</p>
+    <p>
+	<pre class="prettyprint">int ledPin = 13;             
+	
+void setup() {
+  pinMode(ledPin, OUTPUT);    // set LED as output
+}
+
+void loop() {
+  digitalWrite(ledPin, HIGH); // turn on LED
+  delay(1000);                // wait one second (1000ms)
+  digitalWrite(ledPin, LOW);  // turn off LED
+  delay(1000);                // wait one second
+}</pre>
+    </p>
+    <p>
+    So, let's analyze this piece of code. If uploaded, an LED connected to pin 13 will start to blink every second.
+	(<em>Pins </em>are where you connect input or output devices to the Arduino board. They are numbered, so pin 13 shouldn't be that hard to find.)
+    Every Arduino sketch must have the two functions <em>setup()</em> and <em>loop()</em>. As the board is turned on, the µC will execute 
+	<em>setup()</em> once, so <em>setup()</em> is ideal for initializing operations. In this case the pin with the LED is declared as an output
+	(so you can switch the LED on and off later). After <em>setup()</em> is completed, <em>loop()</em> is called and repeated endlessly,
+	until the board is turned off or resetted. The code itself is simple: Turn on LED, wait, turn off, wait, and repeat. Over and over.
+    </p>
+	<p>
+    Of course there are far more possibilities than some blinking LEDs. You can see some of those possibilities in my <a href="/electronics/info/en">Electronics</a> section.
+	</p>
+	<p>
+	<em>
+	Image sources:<br />
+    Microcontrollers: <a href="http://commons.wikimedia.org/wiki/File%3AAVR_group.jpg" target="_blank">Wikipedia</a>. By Springob (Own work) [<a href="http://www.gnu.org/copyleft/fdl.html" target="_blank">GFDL</a> or <a href="http://creativecommons.org/licenses/by/3.0" target="_blank">CC-BY-3.0</a>], <a href="http://commons.wikimedia.org/wiki/File%3AAVR_group.jpg" target="_blank">via Wikimedia Commons</a>.
+	</em>
+	</p>
+    </div>
+  </div>
+</div>

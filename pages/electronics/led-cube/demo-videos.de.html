@@ -1,0 +1,103 @@
+Demo-Videos
+10
+
+<div class="videos">
+
+<div class="row">
+	<p>
+	Die Software für den LED-Würfel stellt drei Modi zur Verfügung: den <strong>Loop-Modus</strong>, den <strong>Clap-Modus</strong> und den <strong>Visual-Modus</strong>.<br />
+	Die drei Videos auf dieser Seite zeigen dir, wie diese Modi funktionieren.
+	</p>
+</div>
+
+<div class="row">
+	<div class="large-6 columns">
+		<div id="loop"></div>
+		<script type="text/javascript">
+			jwplayer("loop").setup({
+				file: "/assets/electronics/led-cube/loop.mp4",
+				image: "/assets/electronics/led-cube/loop.png",
+				width: "100%",
+				aspectratio: "4:3",
+			});
+		</script>
+	</div>
+
+	<div class="large-6 columns">
+		<h4>Loop-Modus</h4>
+		<hr />
+		<p>
+		Der Loop-Modus ist nach dem Anschalten des LED-Würfels standardmäßig aktiv.
+		</p>
+		<p>
+		In diesem Modus werden alle Effekte nacheinander in einer Dauerschleife abgespielt,
+		so dass jeder Effekt einige Sekunden aktiv ist.
+		</p>
+		<p class="small">
+		Programmintern heißen die Effekte übrigens:<br />
+		<em>fill, scanner, randomize, extend_from_corner, snake, up_down, image, fan</em>
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="large-6 columns">
+		<div id="clap"></div>
+		<script type="text/javascript">
+			jwplayer("clap").setup({
+				file: "/assets/electronics/led-cube/clap.mp4",
+				image: "/assets/electronics/led-cube/clap.png",
+				width: "100%",
+				aspectratio: "4:3",
+			});
+		</script>
+	</div>
+
+	<div class="large-6 columns">
+		<h4>Clap-Modus</h4>
+		<hr />
+		<p>
+		Den Clap-Modus aktivierst du durch einmaligen Druck des Mode-Tasters auf der Vorderseite des LED-Würfels.
+		</p>
+		<p>
+		In diesem Modus wird ein Effekt so lange abgespielt, bis du klatschst oder ein anderes lautes Geräusch machst - dann wird zum nächsten Effekt gewechselt. 
+		</p>
+		<p class="small">
+		Das funktioniert wie folgt: Mit dem angeschlossenen Mikrofon wird die Umgebungslautstärke ermittelt. Überschreitet diese einen bestimmten
+		Schwellenwert (z.B. durch Klatschen), wird ein Effektwechsel ausgelöst. Dementsprechend funktioniert dieser Modus bei Lärm nicht gut.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="large-6 columns">
+		<div id="visual"></div>
+		<script type="text/javascript">
+			jwplayer("visual").setup({
+				file: "/assets/electronics/led-cube/visual.mp4",
+				image: "/assets/electronics/led-cube/visual.png",
+				width: "100%",
+				aspectratio: "4:3",
+			});
+		</script>
+	</div>
+
+	<div class="large-6 columns">
+		<h4>Visual-Modus</h4>
+		<hr />
+		<p>
+		Wenn der LED-Würfel im Clap-Modus ist, kannst du mit einem Mode-Tastendruck in den Visual-Modus umschalten.
+		</p>
+		<p>
+		In diesem Modus stellt der LED-Würfel die Umgebungsgeräusche grafisch dar - eignet sich also auch für Nicht-MIDI-Geräte wie z.B. ein Klavier.
+		</p>
+		<p class="small">
+		Siehe: <a href="#" onclick="alert('Ein einfacher USB-MIDI-Visualizer mit Schieberegistern. Bald auf elias-kuiter.de.')">MIDI-Visualizer</a> - ist zwar nicht in 3D, stellt die Töne aber präziser dar.
+		</p>
+		<p class="small">
+		Ja, ich spiele im Video nicht wirklich fehlerfrei - aber es geht ja um den LED-Würfel und nicht um mein Klavierspiel! ;)
+		</p>
+	</div>
+</div>
+
+</div>

@@ -1,0 +1,110 @@
+Die Arduino-Plattform
+10
+
+<div class="row">
+  <ul class="large-block-grid-3 clearing-thumbs" data-clearing>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/arduino-platform1.jpg">
+      <img src="/assets/electronics/arduino-platform1.jpg" alt="Arduino-Board" data-caption="Arduino-Board" />
+    </a>
+  </li>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/arduino-platform2.jpg">
+      <img src="/assets/electronics/arduino-platform2.jpg" alt="LEDs" data-caption="LEDs" />
+    </a>
+  </li>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/arduino-platform3.jpg">
+      <img src="/assets/electronics/arduino-platform3.jpg" alt="Schieberegister" data-caption="Schieberegister" />
+    </a>
+  </li>
+  </ul>
+</div>
+
+<div class="row">
+  <p>
+  <big><strong>Die Arduino-Plattform - Eine Einführung</strong></big>
+  </p>
+  <div class="row">
+    <div class="large-4 columns">
+	  <ul class="large-block-grid-1 clearing-thumbs" data-clearing>
+        <li>
+          <a class="th" href="/assets/electronics/arduino-platform4.jpg">
+	        <img src="/assets/electronics/arduino-platform4.jpg" alt="Verschiedene Mikrocontroller von Atmel" data-caption="Verschiedene Mikrocontroller von Atmel" />
+	      </a>
+        </li>
+		<li>
+          <a class="th" href="/assets/electronics/arduino-platform5.png">
+	        <img src="/assets/electronics/arduino-platform5.png" alt="Programmieren mit der Arduino-IDE" data-caption="Programmieren mit der Arduino-IDE" />
+	      </a>
+        </li>
+		<li>
+          <a class="th" href="/assets/electronics/arduino-platform6.gif">
+	        <img src="/assets/electronics/arduino-platform6.gif" alt="Der Blink-Sketch in Aktion" data-caption="Der Blink-Sketch in Aktion" />
+	      </a>
+        </li>
+      </ul>
+    </div>
+	<div class="large-8 columns justify">
+	<p>
+    Vor rund zwei Monaten bin ich auf ein Projekt gestoßen - die <a href="http://arduino.cc" target="_blank">Arduino-Plattform</a>. 
+    Dabei handelt es sich um eine Mikrocontroller-Entwicklungsplatine, mit der man schnell und einfach elektronische Schaltungen entwickeln kann -
+	selbst für Programmieranfänger.<br />
+	Oder konkreter: Mit einem Arduino-Board kannst du ...
+	<ul>
+	  <li>Sensordaten auslesen, z.B. Temperatur, Beschleunigung, Winkel, Kompass, Mikrofon, Ultraschall und viele mehr</li>
+	  <li>dann diese Daten verarbeiten und mit ihnen weitere Geräte kontrollieren, z.B. einfache LEDs, Motoren, Lautsprecher, LCD-Displays etc.</li>
+	  <li>Technologien benutzen wie Ethernet, WLAN, GSM, Bluetooth usw., um Informationen ins Internet zu übertragen</li>
+	  <li>kreativ sein und die obigen Dinge beliebig kombinieren, um etwas komplett Neues zu schaffen</li>
+    </ul>
+    Aber zunächst einige Infos zum wichtigsten Teil jedes Arduino-Boards: Dem Mikrocontroller.
+	</p>
+    <h5>Was ist ein Mikrocontroller?</h5>
+	<p>
+    Ein Mikrocontroller (auch µC oder uC) ist im Wesentlichen eine "kleine" Ausgabe heutiger Computerprozessoren - er führt ein Programm aus, 
+    welches z.B. elektronische Geräte steuern oder Sensoren abfragen kann. Im Gegensatz zum PC-Prozessor enthält der Arduino-Mikrocontroller 
+    noch sogenannte "Peripherie": einen RAM-Baustein, um temporäre Daten im Speicher zu halten, einen Flashspeicher, der ein Programm enthält 
+    und noch einige andere. Zum Beispiel enthält der Prozessor des Arduino Leonardo, das ich zur Zeit benutze, einen USB-Chip, der direkt 
+    die Kommunikation per USB mit dem Computer übernimmt.
+    </p>
+    <h5>Der erste Sketch - Hallo <del>Welt</del> Blink</h5>
+	<p>
+    Um ein Programm auf einen µC zu laden, gibt es spezielle Geräte, sogenannte <em>Programmer</em>. Arduino-Boards gehen aber einen viel einfacheren Weg:
+	Man schließt das Board mit USB an seinen Computer an, und dann können mit der <a href="http://arduino.cc/en/Main/Software" target="_blank">Arduino-Software</a>
+	Programme (genannt <em>Sketch</em>) auf das Board geladen werden. Die Programmiersprache ist C++, welches sich für hardwarenahe Programmierung anbietet.
+	Mit <em>Wiring</em>, einem Mikrocontroller-Framework, werden aber einige Details der Hardware versteckt.
+	So sieht ein einfacher Sketch zum Beispiel so aus:
+	</p>
+    <p>
+	<pre class="prettyprint">int ledPin = 13;             
+
+void setup() {
+  pinMode(ledPin, OUTPUT);    // LED -> Ausgang
+}
+
+void loop() {
+  digitalWrite(ledPin, HIGH); // LED anschalten
+  delay(1000);                // 1 Sekunde warten
+  digitalWrite(ledPin, LOW);  // LED ausschalten
+  delay(1000);                // 1 Sekunde warten
+}</pre>
+    </p>
+    <p>
+    Dieser Sketch lässt eine am Pin 13 (das sind die Anschlüsse auf dem Arduino-Board) angeschlossene LED im Sekundentakt blinken. In jedem Arduino-Sketch
+	müssen die beiden Funktionen <em>setup()</em> und<em> loop()</em> vorhanden sein. Sobald das Board angeschaltet wird, führt der µC
+	die Funktion <em>setup()</em> aus; sie enthält also meist typische Initialisierungsarbeiten. Hier wird der Pin, an dem die LED hängt, als Ausgang
+	deklariert, damit die LED später an- und ausgeschaltet werden kann. Wie der Name schon andeutet, wird die Funktion <em>loop() </em>nach dem Ausführen von <em>setup() </em>fortlaufend wiederholt. Der Code in der Funktion
+	schaltet die LED an, wartet 1 Sekunde, schaltet sie aus, wartet 1 Sekunde ... und so weiter, bis das Board von der Stromquelle getrennt wird.
+	</p>
+	<p>
+	Natürlich kann man mit Mikrocontrollern viel mehr machen als einige LEDs blinken zu lassen. Einige solcher Projekte von mir kannst du im Bereich <a href="/electronics/info/">Elektronik</a> finden.
+	</p>
+	<p>
+	<em>
+	Bildquellen:<br />
+    Mikrocontroller: <a href="http://commons.wikimedia.org/wiki/File%3AAVR_group.jpg" target="_blank">Wikipedia</a>. By Springob (Own work) [<a href="http://www.gnu.org/copyleft/fdl.html" target="_blank">GFDL</a> or <a href="http://creativecommons.org/licenses/by/3.0" target="_blank">CC-BY-3.0</a>], <a href="http://commons.wikimedia.org/wiki/File%3AAVR_group.jpg" target="_blank">via Wikimedia Commons</a>.
+	</em>
+	</p>
+    </div>
+  </div>
+</div>

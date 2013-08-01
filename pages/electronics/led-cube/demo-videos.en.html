@@ -1,0 +1,103 @@
+Demo videos
+10
+
+<div class="videos">
+
+<div class="row">
+	<p>
+	The LED cube software provides three modes of operation: <strong>Loop mode</strong>, <strong>Clap mode</strong> and <strong>Visual mode</strong>.<br />
+	The three videos on this site show you how these modes work.
+	</p>
+</div>
+
+<div class="row">
+	<div class="large-6 columns">
+		<div id="loop"></div>
+		<script type="text/javascript">
+			jwplayer("loop").setup({
+				file: "/assets/electronics/led-cube/loop.mp4",
+				image: "/assets/electronics/led-cube/loop.png",
+				width: "100%",
+				aspectratio: "4:3",
+			});
+		</script>
+	</div>
+
+	<div class="large-6 columns">
+		<h4>Loop mode</h4>
+		<hr />
+		<p>
+		By default, Loop mode is active after turning on the LED cube.
+		</p>
+		<p>
+		In this mode all effects are shown successively in a continuous loop
+		in order that every effect is active for a few seconds.
+		</p>
+		<p class="small">
+		Internally the effects are called:<br />
+		<em>fill, scanner, randomize, extend_from_corner, snake, up_down, image, fan</em>
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="large-6 columns">
+		<div id="clap"></div>
+		<script type="text/javascript">
+			jwplayer("clap").setup({
+				file: "/assets/electronics/led-cube/clap.mp4",
+				image: "/assets/electronics/led-cube/clap.png",
+				width: "100%",
+				aspectratio: "4:3",
+			});
+		</script>
+	</div>
+
+	<div class="large-6 columns">
+		<h4>Clap mode</h4>
+		<hr />
+		<p>
+		You can activate Clap mode by pressing the mode button at the front of the LED cube once.
+		</p>
+		<p>
+		In this mode an effect is shown until you clap or make loud noise - then the next effect is shown. 
+		</p>
+		<p class="small">
+		That works as follows: The attached microphone detects the environment volume. If it exceeds a certain threshold (e.g. through clapping),
+		an effect change is triggered. Therefore this mode doesn't work well in a loud environment.
+		</p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="large-6 columns">
+		<div id="visual"></div>
+		<script type="text/javascript">
+			jwplayer("visual").setup({
+				file: "/assets/electronics/led-cube/visual.mp4",
+				image: "/assets/electronics/led-cube/visual.png",
+				width: "100%",
+				aspectratio: "4:3",
+			});
+		</script>
+	</div>
+
+	<div class="large-6 columns">
+		<h4>Visual mode</h4>
+		<hr />
+		<p>
+		If Clap mode is active, you can switch to Visual mode by pressing the mode button once.
+		</p>
+		<p>
+		In this mode the LED cube displays the environment volume graphically - so it's also suited for non-MIDI devices like a piano.
+		</p>
+		<p class="small">
+		See: <a href="#" onclick="alert('A simple USB MIDI visualizer with shift registers. Coming soon!')">MIDI visualizer</a> - though it's not in 3D, it displays the tones more precisely.
+		</p>
+		<p class="small">
+		Yeah, I'm not playing that accurate - but it's about the LED cube, not my piano skills! ;)
+		</p>
+	</div>
+</div>
+
+</div>
