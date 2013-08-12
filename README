@@ -1,8 +1,7 @@
-elias-kuiter-de
-===============
+# elias-kuiter-de
+## elias-kuiter-de
 
 My website, built on top of Foundation 4 with a PHP rendering script.
----------------------------------------------------------------------
 
 - assets:
   Contains everything needed by the website such as CSS, JavaScript and SWF files,
@@ -44,6 +43,5 @@ My website, built on top of Foundation 4 with a PHP rendering script.
   To add additional CSS or JavaScript files, open index.php, navigate to the header() function and change
   the code as you like - same goes for the footer.
 
-================================================================
 elias-kuiter-de is a project by Elias Kuiter - app & web design.
 © Elias Kuiter 2013 - http://www.elias-kuiter.de/
