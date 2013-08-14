@@ -167,9 +167,8 @@ code;
 	$obj = new PageRenderer('home', self::$language);
 	$root = $obj->link();
     echo <<<code
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="de">
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="viewport" content="width=device-width" />
@@ -250,7 +249,10 @@ code;
     </div>
 	<div class="row margin-top" style="text-align:right;color:#aaa">
 	<p style="line-height:0.8em">
-	<small>
+  <a href="http://www.w3.org/html/logo/">
+  <img src="/assets/html5.png" width="131" height="32" alt="HTML5 Powered with CSS3 / Styling, Device Access, Multimedia, Performance &amp; Integration, and Semantics" title="HTML5 Powered with CSS3 / Styling, Device Access, Multimedia, Performance &amp; Integration, and Semantics">
+  </a>
+	<small style="display:block;float:right;margin-left:20px">
 	  $footer
 	</small>
 	</p>

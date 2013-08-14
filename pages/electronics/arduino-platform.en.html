@@ -22,8 +22,8 @@ The Arduino platform
 </div>
 
 <div class="row">
-  <p>
-  <big><strong>An introduction to the Arduino platform</strong></big>
+  <p class="big">
+  <strong>An introduction to the Arduino platform</strong>
   </p>
   <div class="row">
     <div class="large-4 columns">
@@ -51,12 +51,14 @@ The Arduino platform
 	In short, it's a prototyping board with a microcontroller with that you can develop electronic circuits easily and fast -
 	even if you're new to programming.<br />
     This may be a little abstract - so let me give some examples. With an Arduino board you can  ...
+    </p>
     <ul>
 	  <li>read in sensor data like temperature, acceleration, angle, compass, microphone, ultrasonic sound, and many, many more</li>
 	  <li>then process these values and use them for controlling an output device like simple LEDs, motors, speakers, LCD display etc.</li>
 	  <li>use more advanced technology like Ethernet, WLAN, GSM, Bluetooth, ... to transmit information over the Internet</li>
 	  <li>be creative and combine the above as you like to create something completely new</li>
     </ul>
+    <p>
     Let's begin with the core of any Arduino board - the microcontroller.
     </p>
     <h5>What is a microcontroller?</h5>
@@ -75,7 +77,6 @@ The Arduino platform
 	a framework for C++, which is predestined for low-level programming. Additionally <em>Wiring</em> hides many details of the underlying hardware.
 	A simple first sketch could look like this:
 	</p>
-    <p>
 	<pre class="prettyprint">int ledPin = 13;             
 	
 void setup() {
@@ -88,7 +89,6 @@ void loop() {
   digitalWrite(ledPin, LOW);  // turn off LED
   delay(1000);                // wait one second
 }</pre>
-    </p>
     <p>
     So, let's analyze this piece of code. If uploaded, an LED connected to pin 13 will start to blink every second.
 	(<em>Pins </em>are where you connect input or output devices to the Arduino board. They are numbered, so pin 13 shouldn't be that hard to find.)

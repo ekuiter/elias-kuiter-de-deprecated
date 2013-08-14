@@ -22,8 +22,8 @@ Die Arduino-Plattform
 </div>
 
 <div class="row">
-  <p>
-  <big><strong>Die Arduino-Plattform - Eine Einführung</strong></big>
+  <p class="big">
+  <strong>Die Arduino-Plattform - Eine Einführung</strong>
   </p>
   <div class="row">
     <div class="large-4 columns">
@@ -51,12 +51,14 @@ Die Arduino-Plattform
     Dabei handelt es sich um eine Mikrocontroller-Entwicklungsplatine, mit der man schnell und einfach elektronische Schaltungen entwickeln kann -
 	selbst für Programmieranfänger.<br />
 	Oder konkreter: Mit einem Arduino-Board kannst du ...
+  </p>
 	<ul>
 	  <li>Sensordaten auslesen, z.B. Temperatur, Beschleunigung, Winkel, Kompass, Mikrofon, Ultraschall und viele mehr</li>
 	  <li>dann diese Daten verarbeiten und mit ihnen weitere Geräte kontrollieren, z.B. einfache LEDs, Motoren, Lautsprecher, LCD-Displays etc.</li>
 	  <li>Technologien benutzen wie Ethernet, WLAN, GSM, Bluetooth usw., um Informationen ins Internet zu übertragen</li>
 	  <li>kreativ sein und die obigen Dinge beliebig kombinieren, um etwas komplett Neues zu schaffen</li>
     </ul>
+    <p>
     Aber zunächst einige Infos zum wichtigsten Teil jedes Arduino-Boards: Dem Mikrocontroller.
 	</p>
     <h5>Was ist ein Mikrocontroller?</h5>
@@ -75,7 +77,6 @@ Die Arduino-Plattform
 	Mit <em>Wiring</em>, einem Mikrocontroller-Framework, werden aber einige Details der Hardware versteckt.
 	So sieht ein einfacher Sketch zum Beispiel so aus:
 	</p>
-    <p>
 	<pre class="prettyprint">int ledPin = 13;             
 
 void setup() {
@@ -88,7 +89,6 @@ void loop() {
   digitalWrite(ledPin, LOW);  // LED ausschalten
   delay(1000);                // 1 Sekunde warten
 }</pre>
-    </p>
     <p>
     Dieser Sketch lässt eine am Pin 13 (das sind die Anschlüsse auf dem Arduino-Board) angeschlossene LED im Sekundentakt blinken. In jedem Arduino-Sketch
 	müssen die beiden Funktionen <em>setup()</em> und<em> loop()</em> vorhanden sein. Sobald das Board angeschaltet wird, führt der µC
