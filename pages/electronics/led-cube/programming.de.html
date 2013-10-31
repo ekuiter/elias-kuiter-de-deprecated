@@ -1,0 +1,84 @@
+4. Programmierung
+40
+/assets/electronics/led-cube/info-4.jpg
+<div class="row">
+  <div class="columns large-8">
+  <ul class="large-block-grid-2 clearing-thumbs" data-clearing>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/led-cube/led-cube.jpg">
+      <img src="/assets/electronics/led-cube/led-cube.jpg" alt="LED-Würfel" data-caption="LED-Würfel" />
+    </a>
+  </li>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/led-cube/programming-top-2.jpg">
+      <img src="/assets/electronics/led-cube/programming-top-2.jpg" alt="Montierter LED-Würfel" data-caption="Montierter LED-Würfel" />
+    </a>
+  </li>
+  </ul>
+  </div>
+  <div class="columns large-4">
+  <ul class="large-block-grid-1">
+  <li class="no-margin">
+    <a class="th" href="/electronics/led-cube/demo-videos/">
+      <img src="/assets/electronics/led-cube/demo-videos.jpg" />
+    </a>
+  </li>
+  </ul>
+  </div>
+</div>
+
+<div class="row">
+  <p class="big">
+  <strong>Wo bleiben die Effekte? - Das Gehirn des LED-Würfels</strong>
+  </p>
+  <div class="row">
+    <div class="large-4 columns">
+	  <ul class="large-block-grid-1 clearing-thumbs" data-clearing>
+        <li>
+          <a class="th" href="/assets/electronics/led-cube/programming-1.jpg">
+	        <img src="/assets/electronics/led-cube/programming-1.jpg" alt="Der Modus-Taster" data-caption="Der Modus-Taster" />
+	      </a>
+        </li>
+		<li>
+          <a class="th" href="/assets/electronics/led-cube/programming-2.jpg">
+	        <img src="/assets/electronics/led-cube/programming-2.jpg" alt="Sound Sensor zur Lautstärkenanalyse" data-caption="Sound Sensor zur Lautstärkenanalyse" />
+	      </a>
+        </li>
+        <li>
+          <a class="th" href="/assets/electronics/led-cube/programming-3.jpg">
+            <img src="/assets/electronics/led-cube/programming-3.jpg" alt="Programmieren mit der Arduino IDE und avrdude" data-caption="Programmieren mit der Arduino IDE und avrdude" />
+          </a>
+        </li>
+      </ul>
+    </div>
+	<div class="large-8 columns justify">
+  <p>
+    Im letzten Teil geht es um die Programmierung des LED-Würfels - jetzt kann man endlich seine Kreativität spielen lassen. Welche Effekte soll der Würfel darstellen können? Wie wäre es mit Zahlen? Buchstaben? Sind Explosionen möglich? Oder könnte man den Würfel auch mit anderen Sensoren kombinieren ...? Vorab: Ich habe bereits einen Arduino-Sketch programmiert, der mit beiden Schaltungsvarianten aus dem letzten Teil funktioniert. Mehr dazu weiter unten.
+  </p>
+  <p>
+    Zuerst solltest du dir eine Adressierung für die LEDs überlegen - damit du eine LED anschalten kannst, musst du erst einmal ihre Nummer / Adresse / ID kennen. In meinem Sketch benutze ich zwei verschiedene Adressierungen. Einmal nummeriere ich die LEDs von unten nach oben, hinten nach vorne, links nach rechts durch (0..63). Dies ist nützlich, wenn man alle LEDs über eine Zählschleife ansprechen will. Die zweite Variante benutzt Koordinaten wie z.B. LED 0,0: Das steht für Ebene 1 und Spalte 1 - der Ursprung sozusagen. LED 3,15 wäre demnach Ebene 4, Spalte 16, also dem Ursprung direkt gegenüber. Wenn du LEDs gezielt an- und ausschalten willst, ist das vielleicht die bessere Variante.
+  </p>
+  <p>
+    Wenn du den Würfel direkt an das Arduino angeschlossen hast, und du z.B. die LED 1,3 anschalten möchtest, kannst du einfach den Pin für Ebene 1 anschalten (am besten in einem Array speichern) und zusätzlich den Pin für Spalte 3 auf HIGH schalten. Bei der Schieberegister-Methode ist das etwas komplizierter: Du musst den <code>shiftOut()</code>-Befehl nutzen, um die &quot;LED-an-und-ausschalt-Bits&quot; in das Schieberegister zu &quot;schieben&quot; (es werden also immer alle LEDs gleichzeitig gesteuert). (Für weitere Infos kannst du dir im Arduino-Sketch mal die <code>display()</code>- und <code>shift()</code>-Funktionen genauer anschauen.)
+  </p>
+  <p>
+    Du wirst auf ein weiteres Problem stoßen: Wenn du z.B. LED 1,3 und LED 2,4 einschalten willst, werden LED 1,4 und LED 2,3 auch plötzlich angehen - was elektrotechnisch nicht verwunderlich ist. Hier kommt nun das sogenannte Multiplexing ins Spiel: Es wird einfach immer nur eine Ebene zu einem Zeitpunkt angeschaltet. Es wird also erst LED 1,3 angeschaltet, dann wieder ausgeschaltet und dann wird LED 2,4 eingeschaltet. Um die beiden LEDs &quot;gleichzeitig&quot; anzuschalten, macht man das Ganze einfach so schnell, dass das menschliche Auge keinen Unterschied mehr erkennt. Das bedeutet für die Programmierung: Selbst wenn der LED-Würfel scheinbar stillsteht, wird eine Schleife ausgeführt, die nacheinander jede Ebene des Würfels anzeigt, und das möglichst schnell. (Wenn der LED-Würfel sichtbar flimmert, ist die Programmierung zu ineffizient geraten, sodass das Programm nicht schnell genug umschaltet.) Das bedeutet außerdem: Bloß kein <code>delay()</code> oder Ähnliches benutzen! Damit würde die Anzeigeschleife unterbrochen und der Würfel sähe nicht gerade schön aus.
+  </p>
+  <p>
+    In meinem Sketch gibt es eine <code>display(int duration)</code>-Funktion - diese zeigt das eingestellte Bild <code>duration</code> Millisekunden lang an. Das eigentliche Bild wird in einem Array gespeichert. Alle LED-an-aus-Operationen beziehen sich auf dieses Array, dann erst wird <code>display()</code> aufgerufen. Das hat den Vorteil, dass man erst mal ein Bild vorbereiten kann, das dann dargestellt wird.
+  </p>
+  <p>
+    Neben einer Reihe von Effekten enthält mein Sketch noch einige Zusatzfunktionen (die du ggf. entfernen müsstest): Zum Beispiel den Mode-Taster (links im ersten Bild), mit dem man zwischen drei Modi wechseln kann. (Die Modi kannst du dir bei den <a href="/electronics/led-cube/demo-videos/">Demo-Videos</a> genauer anschauen.) In Bild 2 kannst du den bereits vorgestellten Sound-Sensor sehen, ein Beispiel für eine praktische Anwendung (neben den Animationen). Dieser Sound-Sensor wird je nach Modus entweder als Quelle für eine visuelle Darstellung der Umgebungslautstärke benutzt, oder er dient als Erkennungssensor für ein Klatschen oder anderes lautes Geräusch (woraufhin dann der Effekt gewechselt wird).
+  </p>
+  <p>
+    So, für jeden, der sich durch diesen Text gekämpft hat, gibt es hier als Belohnung den Downloadlink für den Arduino-Sketch: <strong><a href="/assets/electronics/led-cube/LedCube4.zip">Arduino-Sketch downloaden</a></strong>. Oder aber du schaust dir hier den <strong><a href="/electronics/led-cube/sourcecode/">Quelltext</a></strong> des Sketches an.
+  </p>
+  <p>
+    Noch ein paar Worte zur Handhabung des Sketches: Er ist in Englisch gehalten, sollte aber hoffentlich kein Problem darstellen ... Du solltest die Pins in <code>LedCube4.ino</code> an deinen Würfel anpassen. Wenn du mit einer direkten Würfelverbindung arbeitest, musst du die <code>column</code>- und <code>layerPins[]</code> in <code>Cube.h</code> anpassen sowie <code>setup()</code> ein wenig abändern. Schau auch mal in <code>Audio.h</code> vorbei, da kannst du den Schwellenwert für die Klatscherkennung einstellen. Übrigens, der Sketch ist auf einen 4x4x4-Würfel ausgerichtet, könnte aber auch für andere Größen angepasst werden (siehe <code>Cube.h</code>: <code>#define layers</code> / <code>columns</code>).
+  </p>
+	<p>
+	<strong>So, das war es erst einmal mit dieser Reihe! Falls du Verbesserungsvorschläge hast, immer her damit: <a href="mailto:info@elias-kuiter.de">info@elias-kuiter.de</a>. Danke für's Lesen!</strong>
+	</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,104 @@
+3. Schaltung
+40
+/assets/electronics/led-cube/info-3.jpg
+<div class="row">
+  <ul class="large-block-grid-3 clearing-thumbs" data-clearing>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/led-cube/led-cube.jpg">
+      <img src="/assets/electronics/led-cube/led-cube.jpg" alt="LED-Würfel" data-caption="LED-Würfel" />
+    </a>
+  </li>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/led-cube/wiring-top-2.jpg">
+      <img src="/assets/electronics/led-cube/wiring-top-2.jpg" alt="Mein Arbeitsplatz: Die Würfel-Ansteuerung im Bau ..." data-caption="Mein Arbeitsplatz: Die Würfel-Ansteuerung im Bau ..." />
+    </a>
+  </li>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/led-cube/wiring-top-3.jpg">
+      <img src="/assets/electronics/led-cube/wiring-top-3.jpg" alt="... und das fertige Ergebnis" data-caption="... und das fertige Ergebnis" />
+    </a>
+  </li>
+  </ul>
+</div>
+
+<div class="row">
+  <p class="big">
+  <strong>... und so schließt man den Würfel an</strong>
+  </p>
+  <div class="row">
+    <div class="large-4 columns">
+	  <ul class="large-block-grid-1 clearing-thumbs" data-clearing>
+        <li>
+          <a class="th" href="/assets/electronics/led-cube/wiring-1.jpg">
+	        <img src="/assets/electronics/led-cube/wiring-1.jpg" alt="Direkter Anschluss ans Arduino" data-caption="Direkter Anschluss ans Arduino" />
+	      </a>
+        </li>
+		<li>
+          <a class="th" href="/assets/electronics/led-cube/wiring-2.jpg">
+	        <img src="/assets/electronics/led-cube/wiring-2.jpg" alt="Direkter Anschluss im Test" data-caption="Direkter Anschluss im Test" />
+	      </a>
+        </li>
+        <li>
+          <a class="th" href="/assets/electronics/led-cube/wiring-3.jpg">
+            <img src="/assets/electronics/led-cube/wiring-3.jpg" alt="Anschluss via Ansteuerungsboard im Detail" data-caption="Anschluss via Ansteuerungsboard im Detail" />
+          </a>
+        </li>
+        <li>
+          <a class="th" href="/assets/electronics/led-cube/wiring-4.jpg">
+            <img src="/assets/electronics/led-cube/wiring-4.jpg" alt="Das Ansteuerungsboard von oben: Schieberegister und Anschlüsse" data-caption="Das Ansteuerungsboard von oben: Schieberegister und Anschlüsse" />
+          </a>
+        </li>
+        <li>
+          <a class="th" href="/assets/electronics/led-cube/wiring-5.jpg">
+            <img src="/assets/electronics/led-cube/wiring-5.jpg" alt="Ansteuerungsboard (noch unfertig) von unten" data-caption="Ansteuerungsboard (noch unfertig) von unten" />
+          </a>
+        </li>
+        <li>
+          <a class="th" href="/assets/electronics/led-cube/wiring-6.jpg">
+            <img src="/assets/electronics/led-cube/wiring-6.jpg" alt="Fertiges Ansteuerungsboard von unten" data-caption="Fertiges Ansteuerungsboard von unten" />
+          </a>
+        </li>
+        <li>
+          <a class="th" href="/assets/electronics/led-cube/wiring-7.jpg">
+            <img src="/assets/electronics/led-cube/wiring-7.jpg" alt="Anschluss über das Ansteuerungsboard" data-caption="Anschluss über das Ansteuerungsboard" />
+          </a>
+        </li>
+      </ul>
+    </div>
+	<div class="large-8 columns justify">
+  <p>
+    Grundsätzlich gibt es zwei Möglichkeiten, wie du deinen LED-Würfel nun an das Arduino-Board anschließen kannst: eine einfache und eine etwas schwierigere.
+  </p>
+  <p>
+    Möglichkeit Nummer 1: Du kannst einfach die Kabel der 16 Spalten und 4 Ebenen als digitale Ausgänge an ein Arduino UNO / Leonardo etc. anschließen, GND natürlich ebenfalls. Falls du einen MODE-Taster benutzt, schließt du ihn an 5V und einen freien Eingangs-Pin an ... und da stößt Möglichkeit Nummer 1 schon an ihre Grenzen, denn ein 4x4x4-Würfel benötigt 20 Ausgangsleitungen - das Arduino hat 20 Ausgangsleitungen - du kannst den Taster nicht mehr anschließen. Selbiges gilt für andere Sensoren oder Shields: Alle Pins sind belegt. Falls du einen 5x5x5-Würfel gebaut hast, funktioniert diese Methode natürlich auch nicht.
+  </p>
+  <p>
+    Falls du allerdings nicht vorhast, zusätzliche Sensoren etc. anzuschließen, funktioniert diese Methode ganz gut - man könnte auch ein Arduino Mega kaufen, damit wären dann auch größere Würfel möglich. Im ersten und zweiten Bild links ist diese Art der Ansteuerung dargestellt: Bild 1 zeigt, wie man die Pins am Arduino (beispielsweise) anschließen kann. Damit das funktioniert, muss man die analogen Eingänge als digitale Ausgänge &quot;zweckentfremden&quot;. In Bild 2 sieht man diesen Anschluss in Aktion - damit kann der Würfel bereits vollwertig programmiert werden.
+  </p>
+  <p>
+    Wenn du allerdings weitere Geräte anschließen oder einfach eine raffiniertere Ansteuerung basteln willst, gibt es noch Möglichkeit Nummer 2: Die Ansteuerung des Würfels über spezielle ICs (= Integrierter Schaltkreis = Chip). Ich habe Schieberegister vom Typ 74HC595 benutzt. So ein Schieberegister hat 8 Ausgänge - der 4x4x4-Würfel braucht 20 = 8+8+4 Leitungen, demnach müssen 3 Schieberegister verbunden (in Reihe geschaltet) werden. Die Ausgänge der Schieberegister können dann über drei Leitungen gesteuert werden: Data (1=Spalte/Ebene an, 0=Spalte/Ebene aus), Shift (gespeicherte Bits vorrücken) und Storage (Ausgänge anhand der gespeicherten Bits schalten). Der Vorteil dieser Methode: Es werden nicht mehr 20 Pins benötigt, um den LED-Würfel anzuschließen, sondern nur noch 3 Pins. So bleiben genug Pins übrig, um Zubehör dazuzuschalten. Die Nachteile: Die Programmierung wird erschwert, und das Ansteuerungsboard lötet sich auch nicht von selbst.
+  </p>
+  <p>
+    Wie man den Würfel dann an das Arduino anschließen könnte, siehst du im dritten Bild - im Vergleich zum ersten Bild wesentlich weniger Pins. Im Bild sind folgende Pins beschriftet: 5V, GND, Data, Shift, Storage, Mode, RST, Strobe und Sound Data. Die ersten sind klar, aber was sollen RST, Strobe und Sound Data? - Diese Pins gehören zu einem kleinen Soundmodul von DFRobot. Um genau zu sein, zwei Module: einmal den <a href="http://www.dfrobot.com/index.php?route=product/product&product_id=83" target="_blank">Analog Sound Sensor</a> (in Deutschland bei <a href="http://www.komputer.de/zen/index.php?main_page=product_info&cPath=24&products_id=65" target="_blank">komputer.de</a>), zum anderen den <a href="http://www.dfrobot.com/index.php?route=product/product&path=36_63&product_id=514" target="_blank">Audio Analyzer</a> (ebenfalls bei <a href="http://www.komputer.de/zen/index.php?main_page=product_info&cPath=24&products_id=243" target="_blank">komputer.de</a>). Der Analog Sound Sensor ist ein Mikrofon, dessen Lautstärkewert einfach mit dem Arduino ausgelesen werden kann. Schaltet man den Audio Analyzer dazwischen, teilt dieser das Mikrofonsignal in sieben Frequenzspektren auf - damit können grafische Equalizer realisiert oder bestimmte Tonfolgen erkannt werden.
+  </p>
+  <p>
+    Und genau für so einen grafischen Effekt habe ich diesen Audio Analyzer mit angeschlossen - bei der späteren Programmierung kann man dann den LED-Würfel dazu bringen, die Umgebungslautstärke zu visualisieren. Das ist nur ein Beispiel dafür, was man mit dem Würfel (abgesehen von schicken Animationen) noch machen kann: man kann ihn mit der Umgebung interagieren lassen.
+  </p>
+  <p>
+    Zurück zum Ansteuerungsboard. Im Bild 4 ist das fertige Board zu sehen - drei Schieberegister auf IC-Sockeln, dazu eine Vielzahl von Anschlüssen. Im linken Bereich die Anschlüsse, die zum Arduino führen (eben besprochen). Rechts unten wird das ebenfalls angesprochene Soundmodul angeschlossen. Im hinteren Bereich sieht man die Anschlüsse für den LED-Würfel.
+  </p>
+  <p>
+    Nun zum Bau dieses Boards. Das Prinzip ist einfach: Die Spalten und Ebenen des Würfels werden an die Ausgänge der Schieberegister gelötet, die übrigen Pins der Schieberegister werden ans Arduino angeschlossen. Die Praxis ist dann etwas ... chaotischer. Im fünften Bild ist das noch unfertige Board zu sehen - die roten Kabel sind hier die, die vom Würfel kommen, die Schieberegister agieren dann als &quot;Konverter&quot;, so dass die grünen Kabel zum Arduino führen (schwarz ist wie gehabt Stromversorgung). Auf dem fertigen Board (vorletztes Bild) kann man sehr gut erkennen, dass ICs manchmal zum totalen Chaos führen können ...
+  </p>
+  <p>
+    Ich habe dann noch ein paar &quot;hübsche&quot; Stecker mit Stiftleisten und Heißkleber gebastelt - na ja, solange es funktioniert ... Im letzten Bild sieht man übrigens noch mal, wie der Anschluss des LED-Würfels über das Ansteuerungsboard letztendlich aussieht (noch eine Version ohne Sound-Sensor).
+  </p>
+  <p>
+    Jetzt, wo Hardware-mäßig alles geregelt ist, bleibt noch ein Problem: Du kannst den LED-Würfel ans Arduino anschließen ... aber es passiert nichts. Das ändern wir im vierten und letzten Teil zum Thema Programmierung.
+  </p>
+	<p>
+	<strong>Weiter zu: <a href="/electronics/led-cube/programming/">Teil 4: Programmierung</a></strong>
+	</p>
+    </div>
+  </div>
+</div>

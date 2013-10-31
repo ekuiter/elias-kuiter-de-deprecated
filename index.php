@@ -25,73 +25,73 @@ class Renderer {
   private function dispatch() {
     if (isset($_GET['p']))
         $this->page = str_replace('.', '', $_GET['p']);
-	if (isset($_GET['l']))
-        self::$language = $_GET['l'];
-	switch (self::$language) {
-		case 'en':
-		case 'de':
-			break;
-		default:
-			self::$language = self::$default_language;
-	}
+  	if (isset($_GET['l']))
+          self::$language = $_GET['l'];
+  	switch (self::$language) {
+  		case 'en':
+  		case 'de':
+  			break;
+  		default:
+  			self::$language = self::$default_language;
+  	}
     $this->include_page();
   }
 
   private function include_page() {
     try {
-	  $this->obj = new PageRenderer($this->page, self::$language);
-	} catch (Exception $e) {
-	  $this->obj = new PageRenderer('errors/404', self::$language);
-	}
+  	  $this->obj = new PageRenderer($this->page, self::$language);
+  	} catch (Exception $e) {
+  	  $this->obj = new PageRenderer('errors/404', self::$language);
+  	}
   }
   
   private function navigation() {
     $this->get_pages('', self::$renderers);
-	$this->get_nav();
+	  $this->get_nav();
   }
 
   private function get_pages($dir, &$renderers) {
-	$dir_handle = @opendir("pages$dir");
-	if (!$dir_handle)
-	  return;
-	$renderers[count($renderers)] = array($dir);
-	$renderers = &$renderers[count($renderers) - 1];
-	while ($entry = readdir($dir_handle)) {
-	  if ($entry != '.' && $entry != '..') {
-		if (is_file("pages/$dir/$entry")) {
-		  if ($renderer = PageRenderer::by_file("$dir/$entry"))
-		    $renderers[] = $renderer;
-		} else
-		  $this->get_pages("$dir/$entry", $renderers);
-	  }
-	}
-	closedir($dir_handle);
-	@usort($renderers, 'PageRenderer::sort_by_order');
+  	$dir_handle = @opendir("pages$dir");
+  	if (!$dir_handle)
+  	  return;
+  	$renderers[count($renderers)] = array($dir);
+  	$renderers = &$renderers[count($renderers) - 1];
+  	while ($entry = readdir($dir_handle)) {
+  	  if ($entry != '.' && $entry != '..') {
+  		if (is_file("pages/$dir/$entry")) {
+  		  if ($renderer = PageRenderer::by_file("$dir/$entry"))
+  		    $renderers[] = $renderer;
+  		} else
+  		  $this->get_pages("$dir/$entry", $renderers);
+  	  }
+  	}
+  	closedir($dir_handle);
+  	@usort($renderers, 'PageRenderer::sort_by_order');
   }
   
   private function get_nav() {
     foreach (self::$renderers[0] as $entry) {
-	  if (is_array($entry)) {
-	    $info = PageRenderer::array_info($entry);
-		if ($info) {
-		  $this->add_nav_page($info, true, '.');
-		  foreach ($entry as $entry2) {
-		    if (is_array($entry2)) {
-		      $info2 = PageRenderer::array_info($entry2);
-			  if ($info2) {
-			    $this->add_nav_page($info2, true);
-		        foreach ($entry2 as $entry3)
-		          $info2 == $entry3 ? 0 : $this->add_nav_page($entry3);
-			    self::$nav .= '</ul></li>';
-		      }
-	        } else
-	          $info == $entry2 ? 0 : $this->add_nav_page($entry2);
-		  }
-		  self::$nav .= '</ul></li>';
-		}
-	  } else
-	    $this->add_nav_page($entry, false, '.');
-	}
+  	  if (is_array($entry)) {
+  	    $info = PageRenderer::array_info($entry);
+    		if ($info) {
+    		  $this->add_nav_page($info, true, '.');
+    		  foreach ($entry as $entry2) {
+    		    if (is_array($entry2)) {
+    		      $info2 = PageRenderer::array_info($entry2);
+    			  if ($info2) {
+    			    $this->add_nav_page($info2, true);
+  		        foreach ($entry2 as $entry3)
+  		          $info2 == $entry3 ? 0 : $this->add_nav_page($entry3);
+  			        self::$nav .= '</ul></li>';
+  		        }
+  	        } else
+  	          $info == $entry2 ? 0 : $this->add_nav_page($entry2);
+    		  }
+    		  self::$nav .= '</ul></li>';
+    		}
+  	  } else
+  	    $this->add_nav_page($entry, false, '.');
+  	}
   }
 
   private function add_nav_link($title, $page, $dropdown = false) {
@@ -104,68 +104,112 @@ class Renderer {
   }
   
   public function link_to_language($language) {
-	$language = ($language == self::$default_language ? '' : $language);
-	$link = $this->obj->link(false);
-	return "$link$language";
+  	$language = ($language == self::$default_language ? '' : $language);
+  	$link = $this->obj->link(false);
+  	return "$link$language";
   }
   
   public static function latest_content($max, $sort_by) {	
     $renderers = array();
     foreach (self::$renderers[0] as $entry) {
-	  if (is_array($entry)) {
-	    $info = PageRenderer::array_info($entry);
-		if ($info) {
-		  $renderers[] = $info;
-		 foreach ($entry as $entry2) {
-		    if (is_array($entry2)) {
-		      $info2 = PageRenderer::array_info($entry2);
-			  if ($info2) {
-			    $renderers[] = $info2;
-		        foreach ($entry2 as $entry3)
-		          $info2 == $entry3 ? 0 : (is_object($entry3) ? $renderers[] = $entry3 : 0);
-			  }
-	        } else
-	          $info == $entry2 ? 0 : (is_object($entry2) ? $renderers[] = $entry2 : 0);
-		  }
-		}
-	  } else
-	     is_object($entry) ? $renderers[] = $entry : 0;
-	}
-	usort($renderers, "PageRenderer::sort_by_$sort_by");
-	$output = '<ul class="large-block-grid-'.$max.' latest-content">';
-	$i = 0;
-	foreach($renderers as $renderer) {
-	  if ($i >= $max)
-	    break;
-	  $title = $renderer->title();
-	  $link = $renderer->link();
-	  $day = date('j', $renderer->$sort_by);
-	  switch (self::$language) {
-	    case 'en':
-		  $month = date('F', $renderer->$sort_by);
-		  $date = "$day $month";
-		  break;
-		case 'de':
-		  $months = array('Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember');
-		  $month = $months[(int) date('m', $renderer->$sort_by) - 1];
-		  $date = "$day. $month";
-		  break;
-	  } 
-	  $output .= <<<code
-	  <li><a class="th" href="$link"><strong>$title</strong><small>$date</small></a></li>
+    if (is_array($entry)) {
+      $info = PageRenderer::array_info($entry);
+  	if ($info) {
+  	  $renderers[] = $info;
+  	 foreach ($entry as $entry2) {
+  	    if (is_array($entry2)) {
+  	      $info2 = PageRenderer::array_info($entry2);
+  		  if ($info2) {
+  		    $renderers[] = $info2;
+  	        foreach ($entry2 as $entry3)
+  	          $info2 == $entry3 ? 0 : (is_object($entry3) ? $renderers[] = $entry3 : 0);
+  		  }
+          } else
+            $info == $entry2 ? 0 : (is_object($entry2) ? $renderers[] = $entry2 : 0);
+  	  }
+  	}
+    } else
+       is_object($entry) ? $renderers[] = $entry : 0;
+  	}
+  	usort($renderers, "PageRenderer::sort_by_$sort_by");
+  	$output = '<ul class="large-block-grid-'.$max.' latest-content">';
+  	$i = 0;
+  	foreach($renderers as $renderer) {
+  	  if ($i >= $max)
+  	    break;
+  	  $title = $renderer->title();
+  	  $link = $renderer->link();
+      $image = $renderer->image();
+      if ($image)
+        $image = "<img src=\"$image\" alt=\"$title\" />";
+      else
+        continue;
+  	  $day = date('j', $renderer->$sort_by);
+  	  switch (self::$language) {
+  	    case 'en':
+  		  $month = date('F', $renderer->$sort_by);
+  		  $date = "$day $month";
+  		  break;
+  		case 'de':
+  		  $months = array('Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember');
+  		  $month = $months[(int) date('m', $renderer->$sort_by) - 1];
+  		  $date = "$day. $month";
+  		  break;
+  	  } 
+  	  $output .= <<<code
+        <li>
+          <a class="th" href="$link">
+            $image
+            <p><strong>$title</strong><small>$date</small></p>
+          </a>
+        </li>
 code;
       $i++;
-	}
-	return "$output</ul>";
+  	}
+  	return "$output</ul>";
+  }
+  
+  private static function get_pages_for_folder_grid($renderers, &$pages, $folder) {
+    foreach($renderers as $renderer) {
+      if (is_array($renderer))
+        self::get_pages_for_folder_grid($renderer, $pages, $folder);
+      elseif ($renderer instanceof PageRenderer && 
+        (($renderer->directories == $folder && $renderer->page != 'info') || // pages that are in this directory
+        ($renderer->directories != $folder && strstr($renderer->directories, $folder) && $renderer->page == 'info'))) // info pages in sub dir
+        $pages[] = $renderer;
+    }
+  }
+  
+  public static function folder_grid($folder) {
+    $pages = array();
+    self::get_pages_for_folder_grid(self::$renderers, $pages, $folder);
+    @usort($pages, 'PageRenderer::sort_by_order');
+    $output = '<ul class="large-block-grid-3">';
+    foreach($pages as $page) {
+      $title = $page->title();
+      $link = $page->link();
+      $image = $page->image();
+      if ($image)
+        $image = "<img src=\"$image\" alt=\"$title\" />";
+      $output .= <<<code
+      <li>
+        <a class="th" href="$link">
+          $image
+    	    <p class="sub big">$title</p>
+        </a>
+      </li>
+code;
+    }
+    return "$output</ul>";
   }
 
   private function header() {
     $title = $this->obj->title();
     $nav = self::$nav;
-	$de = $this->link_to_language('de');
-	$en = $this->link_to_language('en');
-	$obj = new PageRenderer('home', self::$language);
-	$root = $obj->link();
+  	$de = $this->link_to_language('de');
+  	$en = $this->link_to_language('en');
+  	$obj = new PageRenderer('home', self::$language);
+  	$root = $obj->link();
     echo <<<code
 <!DOCTYPE html>
 <html lang="de">
@@ -226,11 +270,11 @@ code;
   }
 
   private function footer() {
-	$year = date('Y');
-	switch (self::$language) {
-	  case 'en':
-	    $updated = date('j F Y', $this->obj->updated);
-	    $footer = <<<code
+  	$year = date('Y');
+  	switch (self::$language) {
+  	  case 'en':
+  	    $updated = date('j F Y', $this->obj->updated);
+  	    $footer = <<<code
 		Last updated on $updated.<br />
 	    Uses <a href="http://foundation.zurb.com/">Foundation 4</a>.<br />
         &copy; $year Elias Kuiter. <a href="/imprint/en">Imprint</a>.
@@ -272,7 +316,7 @@ code;
 class PageRenderer {
 
   public $page;
-  private $directories = '/';
+  public $directories = '/';
   private $language;
   private $data;
   public $order;
@@ -288,40 +332,24 @@ class PageRenderer {
     //$page: page - or - page.en.html
     $page = $array[count($array) - 1];
     if (!$language) {
-	  $array = explode('.', $page);
-	  // $page: page
-	  $page = $array[0];
-	  $language = $array[1];
-	}
-	$file = "pages/$this->directories$page.$language.html";
+  	  $array = explode('.', $page);
+  	  // $page: page
+  	  $page = $array[0];
+  	  $language = $array[1];
+  	}
+  	$file = "pages/$this->directories$page.$language.html";
     if (!is_file($file))
-	  throw new Exception("Page $file not found");
+  	  throw new Exception("Page $file not found");
     $this->page = $page;
-	$this->language = $language;
-	$this->data = explode("\n", file_get_contents($file));
-	$this->order = (int) $this->data[1];
-	$this->created = filectime($file);
-	$this->updated = filemtime($file);
+  	$this->language = $language;
+  	$this->data = explode("\n", file_get_contents($file));
+  	$this->order = (int) $this->data[1];
+  	$this->created = filectime($file);
+  	$this->updated = filemtime($file);
   }
 
   public function title() {
     return $this->data[0];
-  }
-  
-  public function render() {
-    $data = $this->data;
-	unset($data[0], $data[1], $data[2]);
-	foreach ($data as &$row) {
-	  if (strstr($row, 'render_widget[')) {
-	    preg_match('|render_widget\[(.*)\]|Uis', $row, $widget);
-		if (strstr($widget[1], 'latest_content')) {
-		  preg_match('|latest_content\((.*)\)|Uis', $widget[1], $args);
-		  $args = isset($args[1]) ? explode(',', $args[1]) : array();
-		  $row = Renderer::latest_content(isset($args[0]) ? (int) trim($args[0]) : 4, isset($args[1]) ? trim($args[1]) : 'updated');
-		}
-	  }
-	}
-    echo implode("\n", $data);
   }
   
   public function link($language = true) {
@@ -329,13 +357,37 @@ class PageRenderer {
     return "$this->directories$this->page/$language";
   }
   
+  public function image() {
+    return stristr($this->data[2], '.jpg') || stristr($this->data[2], '.png') ? $this->data[2] : null;
+  }
+  
+  public function render() {
+    $data = $this->data;
+  	unset($data[0], $data[1], $data[2]);
+  	foreach ($data as &$row) {
+  	  if (strstr($row, 'render_widget[')) {
+  	    preg_match('|render_widget\[(.*)\]|Uis', $row, $widget);
+    		if (strstr($widget[1], 'latest_content')) {
+    		  preg_match('|latest_content\((.*)\)|Uis', $widget[1], $args);
+    		  $args = isset($args[1]) ? explode(',', $args[1]) : array();
+    		  $row = Renderer::latest_content(isset($args[0]) ? (int) trim($args[0]) : 4, isset($args[1]) ? trim($args[1]) : 'updated');
+    		} elseif (strstr($widget[1], 'folder_grid')) {
+  		    preg_match('|folder_grid\((.*)\)|Uis', $widget[1], $args);
+  		    if (isset($args[1]))
+  		      $row = Renderer::folder_grid(trim($args[1]));
+  		  }
+  	  }
+  	}
+    echo implode("\n", $data);
+  }
+  
   public static function sort_by_order($obj1, $obj2) {
     if (is_array($obj1))
 	  $obj1 = self::array_info($obj1);
-	if (is_array($obj2))
-	  $obj2 = self::array_info($obj2);
-	if (is_string($obj1) || is_string($obj2))
-	  return -1;
+  	if (is_array($obj2))
+  	  $obj2 = self::array_info($obj2);
+  	if (is_string($obj1) || is_string($obj2))
+  	  return -1;
     return $obj1->order < $obj2->order ? -1 : ($obj1->order > $obj2->order ? 1 : 0);
   }
   
@@ -351,24 +403,24 @@ class PageRenderer {
     foreach ($array as $entry)
 	  if (is_string($entry))
 		  $directory = $entry;
-	$directory = explode('/', $directory);
-	$directory = $directory[count($directory) - 1];
-	foreach ($array as $entry) {
-	  if (is_object($entry) && $entry->page == 'info')
-	    return $entry;
-	}
-	return false;
+  	$directory = explode('/', $directory);
+  	$directory = $directory[count($directory) - 1];
+  	foreach ($array as $entry) {
+  	  if (is_object($entry) && $entry->page == 'info')
+  	    return $entry;
+  	}
+  	return false;
   }
   
   public static function by_file($file) {
     $array = explode('.', $file);
-	if ($array[1] == Renderer::$language) {
-	  $renderer = new PageRenderer($file);
-	  if ($renderer->order)
-		return $renderer;
-	  else
-	    return false;
-	}
+  	if ($array[1] == Renderer::$language) {
+  	  $renderer = new PageRenderer($file);
+  	  if ($renderer->order)
+  		return $renderer;
+  	  else
+  	    return false;
+  	}
   }
 
 }

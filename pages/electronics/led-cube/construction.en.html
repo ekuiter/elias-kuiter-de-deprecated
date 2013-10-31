@@ -1,0 +1,81 @@
+2. Construction
+30
+/assets/electronics/led-cube/info-2.jpg
+<div class="row">
+  <ul class="large-block-grid-3 clearing-thumbs" data-clearing>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/led-cube/led-cube.jpg">
+      <img src="/assets/electronics/led-cube/led-cube.jpg" alt="LED cube" data-caption="LED cube" />
+    </a>
+  </li>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/led-cube/construction-top-2.jpg">
+      <img src="/assets/electronics/led-cube/construction-top-2.jpg" alt="Bottom: columns red, layers green, power supply black" data-caption="Bottom: columns red, layers green, power supply black" />
+    </a>
+  </li>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/led-cube/construction-top-3.jpg">
+      <img src="/assets/electronics/led-cube/construction-top-3.jpg" alt="Top. With mode button" data-caption="Top. With mode button" />
+    </a>
+  </li>
+  </ul>
+</div>
+
+<div class="row">
+  <p class="big">
+  <strong>This is how the cube is built ...</strong>
+  </p>
+  <div class="row">
+    <div class="large-4 columns">
+	  <ul class="large-block-grid-1 clearing-thumbs" data-clearing>
+        <li>
+          <a class="th" href="/assets/electronics/led-cube/construction-1.jpg">
+	        <img src="/assets/electronics/led-cube/construction-1.jpg" alt="Template for building the cube" data-caption="Template for building the cube" />
+	      </a>
+        </li>
+		<li>
+          <a class="th" href="/assets/electronics/led-cube/construction-2.jpg">
+	        <img src="/assets/electronics/led-cube/construction-2.jpg" alt="Finished LED layer" data-caption="Finished LED layer" />
+	      </a>
+        </li>
+        		<li>
+                  <a class="th" href="/assets/electronics/led-cube/construction-3.jpg">
+        	        <img src="/assets/electronics/led-cube/construction-3.jpg" alt="Bottom in detail: Transistors to control the layers" data-caption="Bottom in detail: Transistors to control the layers" />
+        	      </a>
+                </li>
+      </ul>
+    </div>
+	<div class="large-8 columns justify">
+	<p>
+    Now that all preparations are made you can start to construct the actual cube.
+	</p>
+  <p>
+    With a smaller cube - like this one - it is easy to work in layers, i.e. you start by soldering all LED layers and assemble them later on.
+  </p>
+  <p>
+    The legs of usual 5mm LEDs are about 2.5cm long. If you position the LEDs next to each other with this distance, you can manage without additional wire. In the first image on the left you can see my template - the holes are barely wide enough for the LED to fit (5mm). The gap between the holes is 2.5cm wide.
+  </p>
+  <p>
+    The template is now filled with 16 LEDs. You can solder the cathodes (-) of the LEDs (shorter leg) on the cathode of the neighbour LED - so that all cathodes of all LEDs are connected in the end. The whole thing then looks like in image 2. (One cathode remains, you can remove that. Also one side is loose because all cathodes were soldered - you can fix that with some wire, in the image the thicker wire at the bottom.)
+  </p>
+  <p>
+    It won't do any harm to make sure that all LEDs and connections work from time to time - that can save you some trouble.
+  </p>
+  <p>
+    If you're finished soldering the four layers, you can start assembling them. To do that the anodes (+) (the free ends of the LEDs) have to be connect in all layers. You have to place two layers on each other and then solder the free leg of every LED on the free leg of the respective underlying LED so that all anodes of one column are connected afterwards. (To do that you can bend the end of the upper anode with pliers, that makes it easier to reach the anode of the lower LED.)
+  </p>
+  <p>
+    Well, the actual cube is finished now - but it's still pretty useless. First the cube has to be fixated and wired. You can use a perfboard for that (or etch your own board, might look better). You shouldn't have difficulty soldering the columns and wire them (I used red stranded wire for the columns, see image 3). To connect the layers to the board, I used four wires, one for each layer. Wiring the layers is a little different: The layers are going to be provided with GND (equal to minus here) but the Arduino is not capable of doing that. Hence four transistors are needed: Collector and emitter are wired so that the layer is provided with GND if there's a sufficient high base current; the base current is controlled from the respective Arduino pin (more on that in part 3).
+  </p>
+  <p>
+    Don't forget: All columns have to have series resistors! - As you know LEDs may not be used without series resistor. In this case I used 100 ohm resistors. Additionally I limit the transistors' base current with 10k resistors. Also I soldered a button on the board (image 3 center, on the right) that is LOW or 0V; but as soon as it is pressed you can read a HIGH or 5V on the Arduino pin.
+  </p>
+  <p>
+    That's it! In the third part you will learn everything about connecting the LED cube to the Arduino board.
+  </p>
+	<p>
+	<strong>Proceed to: <a href="/electronics/led-cube/wiring/en">Part 3: Wiring</a></strong>
+	</p>
+    </div>
+  </div>
+</div>

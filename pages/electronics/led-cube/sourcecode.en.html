@@ -1,0 +1,858 @@
+Source code
+0
+
+<script type="text/javascript">
+  if (document.URL.indexOf("?pretty") == -1)
+    window.location = document.URL + "?pretty";
+</script>
+<p>
+  Here you can find the source code of the LED cube Arduino sketch, if you don't want to download it from <a href="/assets/electronics/led-cube/LedCube4.zip">here</a> for any reason. (If the compiler complains: Just download the ZIP file, that'll work.)
+</p>
+<pre class="prettyprint">
+/*
+  4x4x4 LED CUBE + Effects + Sound Analyzer
+  =========================================
+  © 2013 Elias Kuiter ( http://elias-kuiter.de )
+*/
+
+int modePin      =  2;
+int shiftPin1    =  3; // data
+int shiftPin2    =  4; // shift
+int shiftPin3    =  5; // storage
+int analyzerPin1 =  6; // strobe
+int analyzerPin2 =  7; // RST
+int analyzerPin3 = A0; // data
+
+#define LOOP   0
+#define CLAP   1
+#define VISUAL 2
+
+#define DEBOUNCE 200
+
+int mode = LOOP;
+char modeChanged;
+long time;
+int previous;
+
+void setup() {
+  Serial.begin(9600);
+  Cube::init_shifting(shiftPin1, shiftPin2, shiftPin3);
+  //Cube::init(); // for use without shift registers
+  Audio::init();
+}
+
+void loop() {
+  modeChanged = false;
+  switch (mode) {
+    case LOOP:
+      FX::loop();
+      break;
+    case CLAP:
+      FX::clap();
+      break;
+    case VISUAL:
+      FX::visual();
+      break;
+  }
+}
+
+void switchMode() {
+  int modeChange = digitalRead(modePin);
+  if (modeChange == true && previous == false && millis() - time > DEBOUNCE) {
+    if (mode == VISUAL)
+      mode = LOOP;
+    else
+      mode++;
+    modeChanged = true;
+    time = millis();    
+  }
+  previous = modeChange;
+}
+
+namespace Audio {
+
+#define CLAP_THRESHOLD 600
+#define CLAP_RESONANCE 300
+
+  class Analyzer{
+public:
+    Analyzer();
+    Analyzer(int strobePin, int RstPin, int analogPin);
+    void Init();
+    void ReadFreq(int*);
+
+private:
+    int _DCPin;
+    int _StrobePin;
+    int _RSTPin;
+    void RstModule();
+    unsigned long _TimepointSt;
+    unsigned long _TimepointNow;
+  };
+
+  Analyzer analyzer = Analyzer(analyzerPin1, analyzerPin2, analyzerPin3);
+  int frequencies[7];
+  unsigned long time;
+  int average;
+  char clapped;
+  int timer;
+
+  void init();
+  void read();
+  
+  Analyzer::Analyzer(void) {
+      _StrobePin = 4;
+      _RSTPin = 5;
+      _DCPin = 0;
+    }
+
+    Analyzer::Analyzer(int StrobePin, int RstPin, int AnalogPin) {
+      _StrobePin = StrobePin;
+      _RSTPin = RstPin;
+      _DCPin = AnalogPin;
+    }
+
+    void Analyzer::Init() {
+      pinMode(_StrobePin, OUTPUT);
+      pinMode(_RSTPin, OUTPUT);
+      RstModule();
+    }
+
+    void Analyzer::RstModule() {
+      digitalWrite(_StrobePin, LOW);
+      digitalWrite(_RSTPin, HIGH);
+      digitalWrite(_StrobePin, HIGH);
+      digitalWrite(_StrobePin, LOW);
+      digitalWrite(_RSTPin, LOW);
+      delayMicroseconds(72);  
+    }
+
+    void Analyzer::ReadFreq(int *value) {
+      static boolean RstState = false;
+      if (!RstState) {
+        _TimepointSt = millis();
+        RstState = true;
+      }
+      else {
+        _TimepointNow = millis();
+        if (_TimepointNow - _TimepointSt > 3000) {
+          RstModule();
+          RstState = false;
+        }
+      }
+
+      for (byte band = 0; band < 7; band++) {
+        delayMicroseconds(10);
+        value[band] = analogRead(_DCPin);
+        delayMicroseconds(50);
+        digitalWrite(_StrobePin, HIGH);
+        delayMicroseconds(18);
+        digitalWrite(_StrobePin, LOW);
+      }  
+    }
+
+    void init() {
+      analyzer.Init();
+    }
+
+    void read() {
+      static boolean waiting = false;
+      if (!waiting) {
+        time = millis();
+        waiting = true;
+      }
+      else {
+        if (millis() - time > 100) {
+          analyzer.ReadFreq(frequencies); //frequencies in Hz: 63,160,400,1K,2.5K,6.25K,16K
+          waiting = false;
+          average = 0;
+          for (int i = 0; i<7; i++)
+            average += max((frequencies[i]-100),0);
+          average /= 7;
+          if (timer > 0)
+            timer--;
+          if (average > CLAP_THRESHOLD && clapped == false && timer == 0) {
+            Cube::clear();
+            Cube::display(1);
+            clapped = true;
+            timer = CLAP_RESONANCE / 100;
+          }
+        }
+      }
+    }
+
+}
+
+namespace Cube {
+
+  //change if needed
+
+#define layers  4
+#define columns 16
+
+  //if you don't use shifting ...
+  
+  int columnPins[] = {/*0,1,2,3,4,5,6,7,8,9,10,11,12,13,18,19*/} // ... put your columns here
+  ;
+  
+  int layerPins[] = {/*20,21,22,23*/} // ... same for layers
+  ;
+
+  //do not change
+
+  char shifting;
+  int dataPin;
+  int shiftPin;
+  int storagePin;
+
+  char leds[layers][columns];
+  char columns1[] = {
+    0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15                                                    
+  };
+  char columns2[] = {
+    3,7,11,15,2,6,10,14,1,5,9,13,0,4,8,12    
+  };
+  char columns3[] = {
+    15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0   
+  };
+  char columns4[] = {
+    12,8,4,0,13,9,5,1,14,10,6,2,15,11,7,3    
+  };
+  char* pov = columns1;
+
+  //directions
+#define DOWN    0
+#define UP      1
+#define LEFT    2
+#define RIGHT   3
+#define BACK    4
+#define FRONT   5
+  char dirs[6] = {
+    -1,-1,-1,-1,-1,-1    
+  };
+  char lastDirection = -1;
+
+  void init();
+  void init_shifting(int data, int shift, int storage);
+  void init_common();
+  void point_of_view(int view);
+  void display(int duration);
+  void shift(long data);
+  void clear();
+  void on(int layer, int column);
+  void on(int number);
+  char is_on(int layer, int column);
+  char is_on(int number);
+  void off(int layer, int column);
+  void off(int number);
+  void column_on(int column);
+  void column_off(int column);
+  void column_image(int columnGrid, char* img);
+  void column_move(char direction);
+  void layer_on(int layer);
+  void layer_off(int layer);
+  void layer_image(int layer, char* img);
+  void layer_move(char direction);
+  char* directions(int number);
+  char* directions(int layer, int column);
+  char neighbour(int number, char direction = -1);
+  char neighbour(int layer, int column, char direction = -1);
+  
+  void init() {
+      shifting = false;
+      for (int i = 0; i < layers; i++)
+        pinMode(layerPins[i], OUTPUT);
+      for (int i = 0; i < columns; i++)
+        pinMode(columnPins[i], OUTPUT);
+      init_common();
+    }
+
+    void init_shifting(int data, int shift, int storage) {
+      shifting = true;
+      dataPin    = data;
+      shiftPin   = shift;
+      storagePin = storage;
+      pinMode(dataPin,    OUTPUT);
+      pinMode(shiftPin,   OUTPUT);
+      pinMode(storagePin, OUTPUT);
+      init_common();
+    }
+
+    void init_common() {
+      randomSeed(analogRead(0));
+      clear();
+      display(1);
+    }
+
+    void display(int duration) {
+      switchMode();
+      if (modeChanged) return;
+      if (mode == CLAP) {
+        Audio::read();
+        if (Audio::clapped)
+          return;
+      }
+      unsigned long time = millis() + duration;
+      if (shifting) {
+        while (millis() < time) {
+          for (int i = 0; i < layers; i++) {
+            long data = 0;
+            bitSet(data, i);
+            for (int j = 0; j < columns; j++) {
+              if (leds[i][j])
+                bitSet(data, pov[j] + layers);
+            }
+            shift(data);
+          }
+        }
+      } 
+      else {
+        while (millis() < time) {
+          for (int i = 0; i < layers; i++) {
+            for (int j = 0; j < layers; j++)
+              digitalWrite(layerPins[j], LOW);
+            for (int j = 0; j < columns; j++)
+              digitalWrite(columnPins[j], LOW);
+            digitalWrite(layerPins[i], HIGH);
+            for (int j = 0; j < columns; j++) {
+              if (leds[i][j])
+                digitalWrite(columnPins[pov[j]], HIGH);
+            }
+          }
+        }
+      }
+    }
+
+    void shift(long data) {
+      digitalWrite(storagePin, LOW);
+      shiftOut(dataPin, shiftPin, MSBFIRST, (data >> 16) & 0xFF);
+      shiftOut(dataPin, shiftPin, MSBFIRST, (data >> 8 ) & 0xFF);
+      shiftOut(dataPin, shiftPin, MSBFIRST,  data        & 0xFF);
+      digitalWrite(storagePin, HIGH);
+    }
+
+    void point_of_view(int view) {
+      if (view == 1)
+        pov = columns1;
+      if (view == 2)
+        pov = columns2;
+      if (view == 3)
+        pov = columns3;
+      if (view == 4)
+        pov = columns4;
+    }
+
+    void clear() {
+      memset(leds, 0, sizeof(leds[0][0]) * layers * columns);
+    }
+
+    char is_on(int layer, int column) {
+      return leds[layer][column];
+    }
+
+    char is_on(int number) {
+      return is_on(number / columns, number % columns);
+    }
+
+    void on(int layer, int column) {
+      leds[layer][column] = 1;
+    }
+
+    void on(int number) {
+      on(number / columns, number % columns);
+    }
+
+    void off(int layer, int column) {
+      leds[layer][column] = 0;
+    }
+
+    void off(int number) {
+      off(number / columns, number % columns);
+    }
+
+    void column_on(int column) {
+      for (int i = 0; i < layers; i++)
+        leds[i][column] = 1;
+    }
+
+    void column_off(int column) {
+      for (int i = 0; i < layers; i++)
+        leds[i][column] = 0;
+    }
+
+    void column_image(int columnGrid, char* img) {
+      int offset = columnGrid * layers;
+      for (int i = 0; i < layers; i++) {
+        for (int j = 0; j < layers; j++)
+          leds[i][j + offset] = img[i * layers + j];
+      }
+    }
+
+    void column_move(char direction) {
+      char temp[layers][columns];
+      int new_column;
+      for (int i = 0; i < layers; i++) {
+        for (int j = 0; j < columns; j++) {
+          if (direction == FRONT)
+            new_column = j >= (columns - layers) ? j - (columns - layers) : j + layers;
+          else if (direction == BACK)
+            new_column = j < layers ? columns - layers + j : j - layers;
+          else
+            return;
+          temp[i][new_column] = leds[i][j];
+        }
+      }
+      for (int i = 0; i < layers; i++) {
+        for (int j = 0; j < columns; j++)
+          leds[i][j] = temp[i][j];
+      }
+    }
+
+    void layer_on(int layer) {
+      memset(leds[layer], 1, sizeof(leds[layer]));
+    }
+
+    void layer_off(int layer) {
+      memset(leds[layer], 0, sizeof(leds[layer]));
+    }
+
+    void layer_image(int layer, char* img) {
+      for (int i = 0; i < columns; i++)
+        leds[layer][i] = img[i];
+    }
+
+    void layer_move(char direction) {
+      char temp[layers][columns];
+      int new_layer;
+      for (int i = 0; i < layers; i++) {
+        if (direction == UP)
+          new_layer = i == layers - 1 ? 0 : i + 1;
+        else if (direction == DOWN)
+          new_layer = i == 0 ? layers - 1 : i - 1;
+        else
+          return;
+        for (int j = 0; j < columns; j++)
+          temp[new_layer][j] = leds[i][j];
+      }
+      for (int i = 0; i < layers; i++) {
+        for (int j = 0; j < columns; j++)
+          leds[i][j] = temp[i][j];
+      }
+    }
+
+    char* directions(int number) {
+      return directions(number / columns, number % columns);
+    }
+
+    char* directions(int layer, int column) {
+      dirs[DOWN] = dirs[UP] = dirs[LEFT] = dirs[RIGHT] = dirs[BACK] = dirs[FRONT] = -1;
+      if (layer > 0)
+        dirs[DOWN] = columns * (layer - 1) + column;
+      if (layer < 3)
+        dirs[UP] = columns * (layer + 1) + column;
+      if ((column % layers) != 0)
+        dirs[LEFT] = columns * layer + column - 1;
+      if (((column + 1) % layers) != 0)
+        dirs[RIGHT] = columns * layer + column + 1;
+      if (column >= layers)
+        dirs[BACK] = columns * layer + column - layers;
+      if (column < (columns - layers))
+        dirs[FRONT] = columns * layer + column + layers;
+      return dirs;
+    }
+
+    char neighbour(int number, char direction) {
+      return neighbour(number / columns, number % columns, direction);
+    }
+
+    char neighbour(int layer, int column, char direction) {
+      char* dir = directions(layer, column);
+      if (direction == -1 && lastDirection != -1)
+        direction = lastDirection;
+      while (direction == -1 || dir[direction] == -1) {
+        direction = random(6);
+        if (dir[direction] == -1)
+          direction = -1;
+      }
+      if (is_on(dir[direction]))
+        return neighbour(layer, column, -1);
+      lastDirection = direction;
+      return dir[direction];
+    }
+
+}
+
+namespace FX {
+
+  //effect options
+#define NONE      0b0
+#define NOCLEAR   0b1
+#define ROTATE    0b10
+#define MIRROR    0b100
+#define UPPER     0b1000
+#define LOWER     0b10000
+#define LAYER     0b100000
+#define COLUMN    0b1000000
+
+  //number of -1's controls snake length
+  char snakeLeds[] = {
+    -1, -1, -1, -1   
+  };
+  //percentage of sudden snake direction change
+  char changeProbability = 40;
+
+  //image shown by image effect
+  char img[] = { 
+    1,1,1,1,1,1,1,0,1,1,0,0,1,0,0,0            
+  };
+  
+  void (*effect)(int options);
+
+  void loop();
+  void clap();
+  void visual();
+  void run(void (*func)(int options), int options = 0, int count = 1);
+  void rotate(void (*func)(int options), int options);
+  void blend(int options);
+  void fill(int options);
+  void scanner(int options);
+  void randomize(int options);
+  void extend_from_corner(int options);
+  void snake(int options);
+  void up_down(int options);
+  void image(int options);
+  void fan(int options);
+  void visualize(int options);
+  
+  void loop() {
+      run(blend, MIRROR);
+      run(fill, MIRROR | ROTATE);
+
+      run(blend, MIRROR);
+      run(scanner, MIRROR | ROTATE);
+
+      run(blend, MIRROR);
+      run(randomize, NONE, 400);
+
+      run(blend, MIRROR);
+      run(extend_from_corner, UPPER | MIRROR | ROTATE);
+      run(extend_from_corner, LOWER | MIRROR | ROTATE);
+      run(extend_from_corner, UPPER | MIRROR | ROTATE);
+      run(extend_from_corner, LOWER | MIRROR | ROTATE);
+
+      run(blend, MIRROR);
+      run(snake, NONE, 30);
+
+      run(blend, MIRROR);
+      run(up_down, NONE, 20);
+
+      run(blend, MIRROR);
+      run(image, MIRROR | ROTATE | LAYER, 2);
+      run(image, MIRROR | ROTATE | COLUMN, 2);
+
+      run(blend, MIRROR);
+      run(fan, NONE, 10);
+    }
+
+    void clap() {
+      run(fill, MIRROR | ROTATE);
+      run(scanner, MIRROR | ROTATE);
+      run(randomize);
+      run(extend_from_corner, UPPER | MIRROR | ROTATE);
+      run(extend_from_corner, LOWER | MIRROR | ROTATE);
+      run(snake);
+      run(up_down);
+      run(image, MIRROR | ROTATE | LAYER);
+      run(image, MIRROR | ROTATE | COLUMN);
+      run(fan);
+    }
+
+    void visual() {
+      run(visualize, COLUMN);
+      //run(visualize, LAYER);
+    }
+
+    void run(void (*func)(int options), int options, int count) {
+      if (modeChanged) return;
+      Audio::clapped = false;
+      Cube::point_of_view(1);
+      effect = func;
+      if (mode == CLAP) {
+        if (!(options & NOCLEAR))
+          Cube::clear();
+        while(!Audio::clapped) {
+          if (modeChanged) return;
+          if (options & ROTATE)
+            rotate(effect, options);
+          else
+            effect(options);
+        }
+      } 
+      else {
+        if (!(options & NOCLEAR))
+          Cube::clear();
+        for (int runCount = 0; runCount < count; runCount++) {
+          if (modeChanged) return;
+          if (options & ROTATE)
+            rotate(effect, options);
+          else
+            effect(options);
+        }
+      }
+    }
+
+    void rotate(void (*func)(int options), int options) {
+      for (int i = 1; i <= 4; i++) {
+        Cube::point_of_view(i);
+        Cube::clear();
+        func(options);
+      }
+    }
+
+    void blend(int options) {
+      for (int j = 0; j < 64; j++) {
+        Cube::clear();
+        Cube::on(j);
+        Cube::display(5);
+      }
+      if (options & MIRROR) {
+        for (int j = 62; j > 0; j--) {
+          Cube::clear();
+          Cube::on(j);
+          Cube::display(5);
+        }
+      }
+    }
+
+    void fill(int options) {
+      for (int j = 0; j < 64; j++) {
+        Cube::on(j);
+        Cube::display(20);
+      }
+      if (options & MIRROR) {
+        for (int j = 63; j >= 0; j--) {
+          Cube::off(j);
+          Cube::display(4);
+        }
+      }
+    }
+
+    void scanner(int options) {
+      for (int i = 0; i < 16; i++) {
+        Cube::clear();
+        Cube::column_on(i);
+        Cube::layer_on(i / 4);
+        Cube::display(50);
+      }
+      if (options & MIRROR) {
+        for (int i = 15; i >= 0; i--) {
+          Cube::clear();
+          Cube::column_on(i);
+          Cube::layer_on(i / 4);
+          Cube::display(50);
+        }
+      }
+    }
+
+    void randomize(int options) {
+      Cube::on(random(64));
+      Cube::on(random(64));
+      Cube::off(random(64));
+      Cube::off(random(64));
+      Cube::off(random(64));
+      Cube::display(10);
+    }
+
+    void extend_from_corner(int options) {
+      int* layer;
+      if (!(options & UPPER) && !(options & LOWER))
+        return;
+      if (options & UPPER) {
+        int temp[] = {
+          3,2,1,0    
+        };
+        layer = temp;
+      }
+      if (options & LOWER) {
+        int temp[] = {
+          0,1,2,3            
+        };
+        layer = temp;
+      }
+      Cube::on(layer[0], 0);
+      Cube::display(50);
+      Cube::on(layer[1], 0);
+      Cube::on(layer[1], 1);
+      Cube::on(layer[1], 4);
+      Cube::on(layer[1], 5);
+      Cube::display(50);
+      int leds[] = {
+        0,1,2,4,5,6,8,9,10        
+      };
+      for (int i = 0; i < 11; i++)
+        Cube::on(layer[2], leds[i]);
+      Cube::display(50);
+      Cube::layer_on(layer[3]);
+      Cube::display(50);
+      if (options & MIRROR) {
+        Cube::layer_off(layer[3]);
+        Cube::display(50);
+        int leds[] = {
+          0,1,2,4,5,6,8,9,10                                                    
+        };
+        for (int i = 0; i < 11; i++)
+          Cube::off(layer[2], leds[i]);
+        Cube::display(50);
+        Cube::off(layer[1], 0);
+        Cube::off(layer[1], 1);
+        Cube::off(layer[1], 4);
+        Cube::off(layer[1], 5);
+        Cube::display(50);
+        Cube::off(layer[0], 0);
+        Cube::display(50);
+      }
+    }
+
+    void snake(int options) {
+      int snakeLength = sizeof(snakeLeds) / sizeof(snakeLeds[0]);
+      int startLed = random(64);
+      for (int i = 0; i < snakeLength; i++) {
+        if (snakeLeds[i] != -1)
+          Cube::off(snakeLeds[i]);
+        int last = i == 0 ? snakeLength - 1 : i - 1;
+        int led = snakeLeds[last] == -1 ? startLed : snakeLeds[last];
+        char changeDirection = random(100) + 1 < changeProbability ? true : false;
+        char direction = changeDirection ? random(6) : -1;
+        snakeLeds[i] = Cube::neighbour(led, direction);
+        Cube::on(snakeLeds[i]);
+        Cube::display(50);
+      }
+    }
+
+    void up_down(int options) {
+      int column1 = random(16);
+      int column2 = column1;
+      while (column1 == column2)
+        column2 = random(16);
+      for (int i = 0; i < layers; i++) {
+        int j = layers - 1 - i;
+        Cube::off(i == 0 ? layers - 1 : i - 1, column1);
+        Cube::on(i, column1);
+        Cube::off(j == layers - 1 ? 0 : j + 1, column2);
+        Cube::on(j, column2);
+        Cube::display(50);
+      }
+      Cube::display(80);
+    }
+
+    void image(int options) {
+      void (*image_func)(int layer, char* image);
+      void (*move_func)(char direction);
+      char direction, direction_mirror;
+      if (options & LAYER) {
+        image_func = Cube::layer_image;
+        move_func = Cube::layer_move;
+        direction = UP;
+        direction_mirror = DOWN;
+      } 
+      else if (options & COLUMN) {
+        image_func = Cube::column_image;
+        move_func = Cube::column_move;
+        direction = FRONT;
+        direction_mirror = BACK;
+      } 
+      else
+        return;
+      for (int i = 0; i < 4; i++) {
+        i == 0 ? image_func(0, img) : move_func(direction);
+        Cube::display(80);
+      }
+      if (options & MIRROR) {
+        for (int i = 0; i < 2; i++) {
+          move_func(direction_mirror);
+          Cube::display(80);
+        }
+      }
+      move_func(direction_mirror);
+    }
+
+    void fan(int options) {
+      int fanSpeed = 80;
+      Cube::column_on(0);
+      Cube::column_on(5);
+      Cube::column_on(10);
+      Cube::column_on(15);
+      Cube::display(fanSpeed);
+      Cube::clear();
+      Cube::column_on(1);
+      Cube::column_on(5);
+      Cube::column_on(10);
+      Cube::column_on(14);
+      Cube::display(fanSpeed);
+      Cube::clear();
+      Cube::column_on(2);
+      Cube::column_on(6);
+      Cube::column_on(9);
+      Cube::column_on(13);
+      Cube::display(fanSpeed);
+      Cube::clear();
+      Cube::column_on(3);
+      Cube::column_on(6);
+      Cube::column_on(9);
+      Cube::column_on(12);
+      Cube::display(fanSpeed);
+      Cube::clear();
+      Cube::column_on(7);
+      Cube::column_on(6);
+      Cube::column_on(9);
+      Cube::column_on(8);
+      Cube::display(fanSpeed);
+      Cube::clear();
+      Cube::column_on(11);
+      Cube::column_on(5);
+      Cube::column_on(10);
+      Cube::column_on(4);
+      Cube::display(fanSpeed);
+      Cube::clear();
+    }
+
+    void visualize(int options) {
+      Audio::read();
+      Cube::clear();
+      char bands[] = {
+        3,4,5,6       
+      };
+      for (int i = 0; i < 4; i++) {
+        int leds = map(Audio::frequencies[bands[i]], 0, 1023, 0, 16);
+        if (leds) {
+          if (options & LAYER) { 
+            for (int j = 0; j < 4; j++) {
+              if (leds > 4 * j)
+                Cube::on(j, i);            
+              if (leds > 4 * j + 1)
+                Cube::on(j, 4 + i);
+              if (leds > 4 * j + 2)
+                Cube::on(j, 8 + i);
+              if (leds > 4 * j + 3)
+                Cube::on(j, 12 + i);
+            }
+          } 
+          else if (options & COLUMN) {
+            for (int j = 0; j < 4; j++) {
+              if (leds > j)
+                Cube::on(j, i);
+              if (leds > 4 + j)
+                Cube::on(j, 4 + i);
+              if (leds > 8 + j)
+                Cube::on(j, 8 + i);
+              if (leds > 12 + j)
+                Cube::on(j, 12 + i);
+            }
+          }
+        }
+      }
+      Cube::display(1);
+    }
+
+}
+</pre>

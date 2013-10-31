@@ -1,0 +1,81 @@
+2. Konstruktion
+30
+/assets/electronics/led-cube/info-2.jpg
+<div class="row">
+  <ul class="large-block-grid-3 clearing-thumbs" data-clearing>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/led-cube/led-cube.jpg">
+      <img src="/assets/electronics/led-cube/led-cube.jpg" alt="LED-Würfel" data-caption="LED-Würfel" />
+    </a>
+  </li>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/led-cube/construction-top-2.jpg">
+      <img src="/assets/electronics/led-cube/construction-top-2.jpg" alt="Unterseite: Spalten rot, Ebenen grün, Stromversorgung schwarz" data-caption="Unterseite: Spalten rot, Ebenen grün, Stromversorgung schwarz" />
+    </a>
+  </li>
+  <li class="no-margin">
+    <a class="th" href="/assets/electronics/led-cube/construction-top-3.jpg">
+      <img src="/assets/electronics/led-cube/construction-top-3.jpg" alt="Oberseite. Mit Modus-Taster" data-caption="Oberseite. Mit Modus-Taster" />
+    </a>
+  </li>
+  </ul>
+</div>
+
+<div class="row">
+  <p class="big">
+  <strong>So wird der Würfel gebaut ...</strong>
+  </p>
+  <div class="row">
+    <div class="large-4 columns">
+	  <ul class="large-block-grid-1 clearing-thumbs" data-clearing>
+        <li>
+          <a class="th" href="/assets/electronics/led-cube/construction-1.jpg">
+	        <img src="/assets/electronics/led-cube/construction-1.jpg" alt="Schablone zum Bau des Würfels" data-caption="Schablone zum Bau des Würfels" />
+	      </a>
+        </li>
+		<li>
+          <a class="th" href="/assets/electronics/led-cube/construction-2.jpg">
+	        <img src="/assets/electronics/led-cube/construction-2.jpg" alt="Fertige Ebene von LEDs" data-caption="Fertige Ebene von LEDs" />
+	      </a>
+        </li>
+        		<li>
+                  <a class="th" href="/assets/electronics/led-cube/construction-3.jpg">
+        	        <img src="/assets/electronics/led-cube/construction-3.jpg" alt="Unterseite im Detail: Transistoren zur Ansteuerung der Ebenen" data-caption="Unterseite im Detail: Transistoren zur Ansteuerung der Ebenen" />
+        	      </a>
+                </li>
+      </ul>
+    </div>
+	<div class="large-8 columns justify">
+	<p>
+    Jetzt, wo die Vorbereitungen getroffen sind, gilt es, den eigentlichen Würfel zu konstruieren.
+	</p>
+  <p>
+    Bei einem kleineren Würfel - wie diesem - kann man gut ebenenweise arbeiten. Das heißt, dass du zunächst alle LED-Ebenen lötest und diese zum Schluss zusammenfügst.
+  </p>
+  <p>
+    Die Anschlüsse handelsüblicher 5mm-LEDs sind etwa 2,5cm lang. Wenn du die LEDs nebeneinander in diesem Abstand anordnest, kommst du ohne zusätzlichen Draht zurecht. Im ersten Bild links sieht man meine Schablone - die Löcher sind gerade breit genug, dass die LED hinein passt (5mm). Der Abstand der Löcher voneinander beträgt 2,5cm.
+  </p>
+  <p>
+    Die Schablone wird nun mit 16 LEDs gefüllt. Die Kathoden (-) der LEDs (kürzeres Beinchen) lötest du nun an die Kathode der Nachbar-LEDs - so dass am Ende alle Kathoden aller LEDs miteinander verbunden sind. Das Ganze sieht dann etwa so aus wie links Bild 2. (Am Ende bleibt eine Kathode frei, die kannst du entfernen. Außerdem ist eine Seite frei, da alle Kathoden angelötet wurden - da ist noch etwas Draht nötig, im Bild der etwas dickere Draht unten.)
+  </p>
+  <p>
+    Es kann nicht schaden, zwischendurch mit Multimeter und Durchgangsprüfung sicherzustellen, dass alle LEDs funktionieren und die Verbindungen stimmen - das kann einem viel Ärger ersparen.
+  </p>
+  <p>
+    Hast du die vier Ebenen fertig gelötet, kommt der schwierige Teil: Die Ebenen müssen zu einem Würfel zusammengefügt werden. Dazu müssen die Anoden (+), die noch freien Enden der LEDs, unter allen Ebenen verbunden werden. Und zwar musst du zwei Ebenen aufeinander platzieren (sinnvoll ist eine Löthilfe / Dritte Hand) und dann das freie Beinchen jeder LED an das freie Beinchen der jeweils darunterliegenden LED löten, so dass nachher alle Anoden einer Spalte (das sind die Säulen des Würfels) miteinander verbunden sind. (Dazu kann man am besten das Ende der oberen Anode mit einer Zange ein wenig abknicken, so ist die Anode der unteren LED leichter zu erreichen.)
+  </p>
+  <p>
+    So, nun sollte der eigentliche Würfel fertig sein - damit lässt sich aber noch nicht viel anfangen. Erst muss der Würfel fixiert und verkabelt werden. Dafür habe ich eine einfache Lochrasterplatine benutzt (klar kann man auch eine Platine selbst ätzen, sieht eventuell besser aus). Die Spalten anzulöten und zu verkabeln (ich habe für die Spalten rote Litze benutzt, siehe links Bild 3), sollte nicht schwerfallen. Um die Ebenen mit der Platine zu verbinden, habe ich vier Drähte gelegt, jeweils einen zu einer Ebene. Hier ist die Verkabelung etwas anders: Die Ebenen sollen später mit GND (Ground = Masse, hier Minus) beschaltet werden, was das Arduino mit seinen digitalen Ausgängen so aber nicht kann. Deshalb werden vier Transistoren benötigt: Kollektor und Emitter werden so verkabelt, dass bei einem ausreichend hohen Basisstrom die Ebene mit GND versorgt wird; der Basisstrom wird vom jeweiligen Arduino-Pin gesteuert (mehr dazu in Teil 3).
+  </p>
+  <p>
+    Nicht vergessen: Alle Spalten müssen Vorwiderstände haben! - Denn LEDs dürfen bekanntlich nicht ohne Vorwiderstand betrieben werden. Ich habe 100-Ohm-Widerstände benutzt. Außerdem begrenze ich den Basisstrom an den Transistoren mit 10K-Widerständen. Zusätzlich habe ich noch einen Taster auf die Platine gelötet (in Bild 3 rechts Mitte) - dieser liegt auf LOW bzw. 0V; sobald er aber gedrückt wird, wird am Arduino-Eingang ein HIGH bzw. ein 5V gelesen.
+  </p>
+  <p>
+    Fertig! Im dritten Teil erfährst du alles darüber, wie der fertig konstruierte Würfel an das Arduino-Board angeschlossen werden kann.
+  </p>
+	<p>
+	<strong>Weiter zu: <a href="/electronics/led-cube/wiring/">Teil 3: Schaltung</a></strong>
+	</p>
+    </div>
+  </div>
+</div>
