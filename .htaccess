@@ -7,3 +7,4 @@ ErrorDocument 404 /index.php?p=errors/404
 ErrorDocument 500 /index.php?p=errors/500
 
 RedirectMatch 404 README
+RedirectMatch 404 .gitignore
