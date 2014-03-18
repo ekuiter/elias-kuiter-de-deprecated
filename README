@@ -11,15 +11,16 @@ My website, built on top of Foundation 4 with a PHP rendering script.
   Contains the pages of the website. The folder structure is projected onto the navigation bar.
   DO NOT delete the .htaccess file - it ensures that your page files are protected from public access!
   Adding a new page to the website works as follows:
-  - Create a new file named "<page>.<language>.html", where page is the URL on that the page will be
-    shown and language is the language code. Example file name: 'projects.de.html'
+  - Create a new file named "<page>.<language>.html", where page is the URL that the page will be
+    shown on and language is the language code. Example file name: 'projects.de.html'
   - If there are more languages, create more files like 'projects.en.html'.
   - Edit the file (e.g. 'projects.de.html'). Fill the first line with the page name, like 'Projekte'.
     The second line contains a number that determines the page order in the navigation bar:
     0 would be the first page, and if you want to ensure that a page is the last one (for pages like
     'Impressum') set the order to maybe 999. (It is recommended to set numbers with bigger spacing,
     like 10, 20, 30 ... That helps to make changes afterwards.)
-  - Leave the third line free. Then, from the fourth line, start to code the HTML for the page.
+  - Either leave the third line free or fill it with a URL to some picture (this is the page's thumbnail).
+    Then, from the fourth line, start to code the HTML for the page.
   - You're finished! On the next website reload, the page will show up in the navigation bar.
     Consider to add other languages too!
   If you want to use sub-navigations:
