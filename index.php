@@ -288,6 +288,7 @@ code;
         &copy; $year Elias Kuiter. <a href="/imprint/">Impressum</a>.
 code;
 	}
+  $language = self::$language;
     echo <<<code
 		</div>
     </div>
@@ -295,6 +296,9 @@ code;
       <div id="disqus_thread"></div>
       <script type="text/javascript">
         var disqus_shortname = 'eliaskuiter'; // required: replace example with your forum shortname
+        var disqus_config = function () { 
+          this.language = "$language";
+        };
         (function() {
           var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
           dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
