@@ -291,7 +291,7 @@ code;
     echo <<<code
 		</div>
     </div>
-    <div class="row">
+    <div class="row margin-top">
       <div id="disqus_thread"></div>
       <script type="text/javascript">
         var disqus_shortname = 'eliaskuiter'; // required: replace example with your forum shortname
