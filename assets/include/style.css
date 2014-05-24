@@ -8,7 +8,7 @@
 }
 
 .gray {
-  background-color: #eee;
+  background-color: #f6f6f6;
   padding: 10px;
 }
 
@@ -139,4 +139,33 @@ a.th img {
 .below {
   display: block;
   margin-bottom: 10px;
+}
+
+.sites {
+  font-size: 11px;
+  text-align: center;
+}
+
+.sites a {
+  background-color: white;
+}
+
+.feed {
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.feed td {
+  vertical-align: top;
+  overflow: hidden;
+}
+
+.feed a {
+  display: block;
+  height: 100%;
+}
+
+.feed tr.entry:hover {
+  background-color: #f0f0f0;
+  cursor: pointer;
 }
