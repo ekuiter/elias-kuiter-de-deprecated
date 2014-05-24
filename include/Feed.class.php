@@ -249,14 +249,14 @@ class Feed {
       $message = $collection[$idx];
       $i = self::$message_id;
       $date = Renderer::format_date($message['timestamp']);
-      $group_prev = isset($collection[$idx - 1]) && $collection[$idx - 1]['subject'] == $message['subject'] ? ';padding-top:2px'    : '';
-      $group_next = isset($collection[$idx + 1]) && $collection[$idx + 1]['subject'] == $message['subject'] ? ';padding-bottom:2px' : '';
+      $group_prev = isset($collection[$idx - 1]) && $collection[$idx - 1]['subject'] == $message['subject'] ? 'padding-top:2px;'    : '';
+      $group_next = isset($collection[$idx + 1]) && $collection[$idx + 1]['subject'] == $message['subject'] ? 'padding-bottom:2px;' : '';
       $button_pos = $group_next ? 'bottom:7px' : 'bottom:0';
       $random = $group_prev ? $random : $this->color($message['subject']);
       $output .= <<<code
         <tr class="entry" onclick="$('#message$i').slideToggle(200)">
           <td style="width:40px;$group_next$group_prev"><img src="$message[serviceImg]" alt="$message[service]" title="$message[service]" width="24" /></td>
-          <td style="width:90px;font-size:0.7em$group_next$group_prev"><div style="padding-top:7px">$date</div></td>
+          <td style="width:90px;font-size:0.7em;$group_next$group_prev"><div style="padding-top:7px">$date</div></td>
           <td style="$group_next$group_prev">
             <div style="padding-top:3px">$message[subject]</div>
             <div id="message$i" style="position:relative;display:none;margin-top:7px;font-size:0.8em;height:60px">
