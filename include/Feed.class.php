@@ -8,11 +8,12 @@ class Feed {
   
   public function __construct() {
     if (!self::$messages) {
-      if (file_exists('msg.dat') && time() - filemtime('msg.dat') < $GLOBALS['update_interval'] * 60)
-        self::$fetched = unserialize(file_get_contents('msg.dat'));
+      $message_file = 'include/msg.dat';
+      if (file_exists($message_file) && time() - filemtime($message_file) < $GLOBALS['update_interval'] * 60)
+        self::$fetched = unserialize(file_get_contents($message_file));
       else {
         $this->fetch_messages();
-        file_put_contents('msg.dat', serialize(self::$fetched));
+        file_put_contents($message_file, serialize(self::$fetched));
       }
     }
   }
