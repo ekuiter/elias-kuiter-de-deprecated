@@ -24,6 +24,8 @@ class Renderer {
   }
 
   private function dispatch() {
+    if (isset($_GET['refetch']))
+      (new Feed())->fetch(true);
     if (isset($_GET['p']))
         $this->page = str_replace('.', '', $_GET['p']);
   	if (isset($_GET['l']))

@@ -5,20 +5,34 @@ class Feed {
   private static $messages = array();
   private static $message_id;
   private static $colors = array();
+  private $message_file = 'include/msg.dat';
   
-  public function __construct() {
+  function create_cache() {
+    $this->fetch_messages();
+    file_put_contents($this->message_file, serialize(self::$fetched));
+  }
+  
+  function read_cache() {
+    if (file_exists($this->message_file))
+      self::$fetched = unserialize(file_get_contents($this->message_file));
+    else
+      $this->create_cache();
+  }
+  
+  public function fetch($refetch) {
     if (!self::$messages) {
-      $message_file = 'include/msg.dat';
-      if (file_exists($message_file) && time() - filemtime($message_file) < $GLOBALS['update_interval'] * 60)
-        self::$fetched = unserialize(file_get_contents($message_file));
-      else {
-        $this->fetch_messages();
-        file_put_contents($message_file, serialize(self::$fetched));
-      }
+      if ($refetch) {
+        if (file_exists($this->message_file) && time() - filemtime($this->message_file) < $GLOBALS['update_interval'] * 60)
+          $this->read_cache();
+        else
+          $this->create_cache();
+      } else
+        $this->read_cache();
     }
   }
   
   public function render($entries) {
+    $this->fetch(false);
     $this->process_messages();
     return $this->display_messages($entries);
   }
