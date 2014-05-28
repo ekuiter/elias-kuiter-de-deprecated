@@ -3,12 +3,20 @@
 class Feed {
   private static $fetched = array();
   private static $messages = array();
-  private static $message_id;
+  private static $group_id = 0;
   private static $colors = array();
   private $message_file = 'include/msg.dat';
   
   function create_cache() {
     $this->fetch_messages();
+    file_put_contents($this->message_file, serialize(self::$fetched));
+  }
+  
+  function update_cache() {
+    $this->fetch_messages();
+    $new = self::$fetched;
+    $old = unserialize(file_get_contents($this->message_file));
+    self::$fetched = array_merge($new, $old);
     file_put_contents($this->message_file, serialize(self::$fetched));
   }
   
@@ -22,9 +30,12 @@ class Feed {
   public function fetch($refetch) {
     if (!self::$messages) {
       if ($refetch) {
-        if (file_exists($this->message_file) && time() - filemtime($this->message_file) < $GLOBALS['update_interval'] * 60)
-          $this->read_cache();
-        else
+        if (file_exists($this->message_file)) {
+          if (time() - filemtime($this->message_file) < $GLOBALS['update_interval'] * 60)
+            $this->read_cache();
+          else
+            $this->update_cache();
+        } else
           $this->create_cache();
       } else
         $this->read_cache();
@@ -206,6 +217,33 @@ class Feed {
       return ($a['timestamp'] > $b['timestamp']) ? -1 : 1;
   }
   
+  function color($string) {
+      srand(hexdec(substr(md5($string), 0, 16)));
+      if (isset(self::$colors[$string]))
+        return self::$colors[$string];
+      else {
+        $color = '';
+        $color .= sprintf("%02X", 40);
+        $color .= sprintf("%02X", rand(140, 200));
+        $color .= sprintf("%02X", rand(80, 220));
+        return self::$colors[$string] = $color;
+      }
+  }
+  
+  function group_messages() {
+    $group_id = 0;
+    for ($i = 0; $i < count(self::$messages); $i++) {
+      $message = self::$messages[$i];
+      $message['timestamp'] = Renderer::format_date($message['timestamp']);
+      $message['color'] = $this->color($message['subject']);
+      $grouped_messages[$group_id][] = $message;
+      $group_with_next = isset(self::$messages[$i + 1]) && self::$messages[$i + 1]['subject'] == $message['subject'];
+      if (!$group_with_next)
+        $group_id++;
+    }
+    self::$messages = $grouped_messages;
+  }
+  
   /* home.de.html / home.en.html:
     <li>
       <a href="http://youtube.com/ekuiter"><img src="/assets/youtube.png" alt="YouTube" /></a>
@@ -235,55 +273,68 @@ class Feed {
       $this->process_googleplay_multiple($GLOBALS['googleplay_apps']);
     
     usort(self::$messages, array($this, 'sort_messages'));
+    $this->group_messages();
   }
   
-  function color($string) {
-      mt_srand((double) microtime() * 1000000);
-      if (isset(self::$colors[$string]))
-        return self::$colors[$string];
-      else {
-        $color = '';
-        while(strlen($color) < 6)
-            $color .= sprintf("%02X", mt_rand(40, 180));
-        return self::$colors[$string] = $color;
-      }
-  }
-  
-  function display_messages($entries) {
+  function get_collection($entries) {
     $count = count(self::$messages);
     $half = (int) ($count / 2) + 1;
     if ($entries == '1st-half')
-      $collection = array_slice(self::$messages, 0, $half);
+      return array_slice(self::$messages, 0, $half);
     else if ($entries == '2nd-half')
-      $collection = array_slice(self::$messages, $half, $count - $half);
+      return array_slice(self::$messages, $half, $count - $half);
     else
-      $collection = array_slice(self::$messages, 0, $entries);
-    $output = '<table class="feed">';
-    for ($idx = 0; $idx < count($collection); $idx++) {
-      $message = $collection[$idx];
-      $i = self::$message_id;
-      $date = Renderer::format_date($message['timestamp']);
-      $group_prev = isset($collection[$idx - 1]) && $collection[$idx - 1]['subject'] == $message['subject'] ? 'padding-top:2px;'    : '';
-      $group_next = isset($collection[$idx + 1]) && $collection[$idx + 1]['subject'] == $message['subject'] ? 'padding-bottom:2px;' : '';
-      $button_pos = $group_next ? 'bottom:7px' : 'bottom:0';
-      $random = $group_prev ? $random : $this->color($message['subject']);
-      $output .= <<<code
-        <tr class="entry" onclick="$('#message$i').slideToggle(200)">
-          <td style="width:40px;$group_next$group_prev"><img src="$message[serviceImg]" alt="$message[service]" title="$message[service]" width="24" /></td>
-          <td style="width:90px;font-size:0.7em;$group_next$group_prev"><div style="padding-top:7px">$date</div></td>
-          <td style="$group_next$group_prev">
-            <div style="padding-top:3px">$message[subject]</div>
-            <div id="message$i" style="position:relative;display:none;margin-top:7px;font-size:0.8em;height:60px">
-              <div style="position:absolute;right:0;$button_pos;width:100px;height:30px">
-                <a href="$message[url]" class="button secondary" style="padding-left:3px;padding-right:3px">$message[buttonLabel] &gt;&gt;</a>
-              </div>
-              <div style="">$message[message]</div>
-            </div>
-          </td>
-          <td style="padding:0;width:10px;background-color:#$random"></td>
-        </tr>
+      return array_slice(self::$messages, 0, $entries);
+  }
+  
+  function more($message, $hr) {
+    return <<<code
+      $hr
+      <div class="message" style="">  
+        <a href="$message[url]" class="button secondary">$message[buttonLabel] &gt;&gt;</a>
+        <strong>$message[timestamp]</strong>: $message[message]
+      </div>
 code;
-      self::$message_id++;
+  }
+  
+  function display_messages($entries) {
+    $collection = $this->get_collection($entries);
+    $output = '<table class="feed">';
+    foreach ($collection as $group) {
+      $count = count($group);
+      $message_count = $count == 1 ? '' : "<em>($count)</em>";
+      for ($i = 0; $i < count($group); $i++) {
+        $group_id = self::$group_id++;
+        $message = $group[$i];
+        if ($i == 0) {
+          $output .= <<<code
+            <tr class="entry" onclick="$('#group-$group_id').slideToggle(200)">
+              <td class="icon">
+                <img src="$message[serviceImg]" alt="$message[service]" title="$message[service]" width="24" />
+              </td>
+              <td class="date">
+                <div>$message[timestamp]</div>
+              </td>
+              <td class="content">
+                <div class="subject">
+                  $message[subject] $message_count
+                </div>
+                <div class="more" id="group-$group_id">
+code;
+          $output .= $this->more($message, '');
+        }
+        if ($i > 0) {
+          $output .= $this->more($message, '<hr />');
+        }
+        if ($i == count($group) - 1) {
+          $output .= <<<code
+                </div>
+              </td>
+              <td class="color-strip" style="background-color:#$message[color]"><div>&gt;&gt;</div></td>
+            </tr>
+code;
+        }
+      }
     }
     return "$output</table>";
   }

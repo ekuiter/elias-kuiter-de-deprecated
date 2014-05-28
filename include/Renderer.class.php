@@ -11,7 +11,7 @@ class Renderer {
   public static $months_de = array('Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
                                    'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember');
   public static $months_en = array('January', 'February', 'March', 'April', 'May', 'June',
-                                   'July','August', 'September', 'October', 'November', 'December');
+                                   'July', 'August', 'September', 'October', 'November', 'December');
   public static $render;
 
   public function __construct() {

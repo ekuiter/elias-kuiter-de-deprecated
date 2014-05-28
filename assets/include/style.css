@@ -157,15 +157,74 @@ a.th img {
 
 .feed td {
   vertical-align: top;
-  overflow: hidden;
 }
 
-.feed a {
-  display: block;
-  height: 100%;
+.feed div {
+  overflow: hidden;
 }
 
 .feed tr.entry:hover {
   background-color: #f0f0f0;
   cursor: pointer;
+}
+
+.feed td.icon {
+  width: 40px;
+}
+
+.feed td.date {
+  width: 90px;
+  font-size: 0.7em;
+}
+
+.feed td.date div {
+  padding-top: 7px;
+}
+
+.feed td.content .subject {
+  padding-top: 3px;
+}
+
+.feed td.content .more {
+  display: none;
+}
+
+.feed td.content .more .message {
+  margin-top: 7px;
+  font-size: 0.8em;
+  height: 60px;
+}
+
+.feed td.content .more .message a {
+  float: right;
+  position: relative;
+  top: 35px;
+  width: 100px;
+  height: 22px;
+  padding: 4px 3px 0 3px;
+}
+
+.feed td.content .more hr {
+  margin: 7px 0 10px 0;
+}
+
+.feed td.color-strip {
+  padding: 0;
+  width: 10px;
+  font-size: 8px;
+  color: white;
+}
+
+.feed td.color-strip div {
+  display: none;
+  margin-top: 20px;
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+
+.feed tr.entry:hover td.color-strip div {
+  display: block;
 }
