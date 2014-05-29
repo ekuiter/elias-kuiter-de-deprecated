@@ -1,0 +1,9 @@
+<?php
+  
+$GLOBALS['update_interval'] = 60;
+$GLOBALS['github_username'] = 'username';
+$GLOBALS['github_password'] = 'password';
+$GLOBALS['youtube_username'] = 'username';
+$GLOBALS['googleplay_apps'] = array('app1', 'app2');
+  
+?>
