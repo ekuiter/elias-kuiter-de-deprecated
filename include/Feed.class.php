@@ -17,10 +17,9 @@ class Feed {
     $googleplay = self::$fetched['googleplay'];
     $old = unserialize(file_get_contents($this->message_file));
     self::$fetched['googleplay'] = $old['googleplay'];
-    foreach ($googleplay as $app) {
+    foreach ($googleplay as $app)
       if (!in_array($app, $old['googleplay']))
         self::$fetched['googleplay'][] = $app;
-    }
     file_put_contents($this->message_file, serialize(self::$fetched));
   }
   
