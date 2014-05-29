@@ -14,9 +14,13 @@ class Feed {
   
   function update_cache() {
     $this->fetch_messages();
-    $new = self::$fetched;
+    $googleplay = self::$fetched['googleplay'];
     $old = unserialize(file_get_contents($this->message_file));
-    self::$fetched = array_merge($new, $old);
+    self::$fetched['googleplay'] = $old['googleplay'];
+    foreach ($googleplay as $app) {
+      if (!in_array($app, $old['googleplay']))
+        self::$fetched['googleplay'][] = $app;
+    }
     file_put_contents($this->message_file, serialize(self::$fetched));
   }
   
@@ -71,6 +75,8 @@ class Feed {
   
   function fetch_googleplay($app) {
     $response = file_get_contents("https://androidquery.appspot.com/api/market?app=$app");
+    if (strstr($response, '503'))
+      return false;
     return json_decode($response);
   }
   
@@ -163,31 +169,36 @@ class Feed {
     return $messages;
   }
   
-  function process_googleplay($app) {
-    $date = str_replace(Renderer::$months_de, Renderer::$months_en, $app->published);
-    $message = array(
-      'timestamp' => strtotime($date),
-      'service' => 'Google Play',
-      'serviceImg' => '/assets/googleplay.png',
-      'url' => "https://play.google.com/store/apps/details?id=$app->app&hl=" . Renderer::$language,
-      'message' => explode('<br/>', $app->dialog->wbody)[2]
-    );
-    switch (Renderer::$language) {
-    case 'en':
-      $message['buttonLabel'] = 'Go to App';
-      $message['subject'] = "Updated <strong>$app->name</strong>";
-      break;
-    case 'de':
-    $message['buttonLabel'] = 'Zur App';
-    $message['subject'] = "<strong>$app->name</strong> aktualisiert";
-      break;
+  function process_googleplay($app_name) {
+    $messages = array();
+    foreach (self::$fetched['googleplay'] as $app) {
+      if ($app && $app->app == $app_name) {
+        $date = str_replace(Renderer::$months_de, Renderer::$months_en, $app->published);
+        $message = array(
+          'timestamp' => strtotime($date),
+          'service' => 'Google Play',
+          'serviceImg' => '/assets/googleplay.png',
+          'url' => "https://play.google.com/store/apps/details?id=$app->app&hl=" . Renderer::$language,
+          'message' => explode('<br/>', $app->dialog->wbody)[2]
+        );
+        switch (Renderer::$language) {
+        case 'en':
+          $message['buttonLabel'] = 'Go to App';
+          $message['subject'] = "Updated <strong>$app->name</strong>";
+          break;
+        case 'de':
+        $message['buttonLabel'] = 'Zur App';
+        $message['subject'] = "<strong>$app->name</strong> aktualisiert";
+          break;
+        }
+        $messages[] = $message;
+      }
     }
-    $messages[] = $message;
     return $messages;
   }
   
   function walk_fetch_googleplay($app) {
-    self::$fetched['googleplay'][$app] = $this->fetch_googleplay($app);
+    self::$fetched['googleplay'][] = $this->fetch_googleplay($app);
   }
   
   function fetch_googleplay_multiple($apps) {
@@ -195,7 +206,7 @@ class Feed {
   }
   
   function walk_process_googleplay($app) {
-    self::$messages = array_merge(self::$messages, self::process_googleplay(self::$fetched['googleplay'][$app]));
+    self::$messages = array_merge(self::$messages, self::process_googleplay($app));
   }
   
   function process_googleplay_multiple($apps) {
@@ -231,6 +242,7 @@ class Feed {
   }
   
   function group_messages() {
+    $grouped_messages = array();
     $group_id = 0;
     for ($i = 0; $i < count(self::$messages); $i++) {
       $message = self::$messages[$i];
