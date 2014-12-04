@@ -62,11 +62,11 @@ class PageRenderer {
   		    preg_match('|folder_grid\((.*)\)|Uis', $widget[1], $args);
   		    if (isset($args[1]))
   		      $row = (new FolderGrid())->render(trim($args[1]));
-  		  } elseif (strstr($widget[1], 'feed')) {
-  		    preg_match('|feed\((.*)\)|Uis', $widget[1], $args);
-  		    if (isset($args[1]))
-  		      $row = (new Feed())->render(trim($args[1]));
-  		  }
+                } elseif (strstr($widget[1], 'feed')) {
+                  preg_match('|feed\((.*)\)|Uis', $widget[1], $args);
+    		  $args = isset($args[1]) ? explode(',', $args[1]) : array();                  
+                  $row = (new Feed())->render(isset($args[0]) ? (int) trim($args[0]) : 4, isset($args[1]) ? trim($args[1]) : false);
+                }
   	  }
   	}
     Renderer::$render .= implode("\n", $data);

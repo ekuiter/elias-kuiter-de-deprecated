@@ -45,10 +45,10 @@ class Feed {
     }
   }
   
-  public function render($entries) {
+  public function render($entries, $collection) {
     $this->fetch(true);
-    $this->process_messages();
-    return $this->display_messages($entries);
+    $this->process_messages($collection);
+    return $this->display_messages($entries, $collection);
   }
   
   function fetch_github($username, $password) {
@@ -160,7 +160,7 @@ class Feed {
     return $messages;
   }
   
-  function process_youtube($xml) {
+  function process_youtube($xml, $collection) {
     $xml = new SimpleXMLElement($xml);
     foreach($xml->channel->item as $item) {
       $message = array(
@@ -179,6 +179,10 @@ class Feed {
         $message['buttonLabel'] = 'Abspielen';
         $message['subject'] = '<strong>Video</strong> hochgeladen';
         break;
+      }
+      if (($collection === false && (isset($_GET['only']) && $_GET['only'] == 'youtube'))
+          || $collection === "youtube") {
+        $message['subject'] = "<strong>$item->title</strong>";
       }
       $messages[] = $message;
     }
@@ -285,19 +289,22 @@ class Feed {
       </a>
     </li>
   */
-  function process_messages() {
-    if (!isset($_GET['only']) || $_GET['only'] == 'github')
+  function process_messages($collection) {
+    if (($collection === false && (!isset($_GET['only']) || $_GET['only'] == 'github'))
+        || $collection === "github")
       $github = $this->process_github(self::$fetched['github']);
     else
       $github = array();
-    if (!isset($_GET['only']) || $_GET['only'] == 'youtube')
-      $youtube = $this->process_youtube(self::$fetched['youtube']);
+    if (($collection === false && (!isset($_GET['only']) || $_GET['only'] == 'youtube'))
+        || $collection === "youtube")
+      $youtube = $this->process_youtube(self::$fetched['youtube'], $collection);
     else
       $youtube = array();
     
     self::$messages = array_merge($github/*, $youtube*/);
     
-    if (!isset($_GET['only']) || $_GET['only'] == 'googleplay')
+    if (($collection === false && (!isset($_GET['only']) || $_GET['only'] == 'googleplay'))
+        || $collection === "googleplay")
       $this->process_googleplay_multiple($GLOBALS['googleplay_apps']);
     
     usort(self::$messages, array($this, 'sort_messages'));
