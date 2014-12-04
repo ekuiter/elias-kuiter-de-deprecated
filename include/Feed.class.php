@@ -276,19 +276,6 @@ class Feed {
     self::$messages = $grouped_messages;
   }
   
-  /* home.de.html / home.en.html:
-    <li>
-      <a href="http://youtube.com/ekuiter"><img src="/assets/youtube.png" alt="YouTube" /></a>
-      <br />YouTube
-    </li>
-    feed.de.html / feed.en.html:
-    <li>
-      <a href="/index.php?p=feed&amp;only=youtube">
-        <img src="/assets/youtube.png" alt="YouTube" width="24" />
-        Nur YouTube
-      </a>
-    </li>
-  */
   function process_messages($collection) {
     if (($collection === false && (!isset($_GET['only']) || $_GET['only'] == 'github'))
         || $collection === "github")
@@ -301,7 +288,7 @@ class Feed {
     else
       $youtube = array();
     
-    self::$messages = array_merge($github/*, $youtube*/);
+    self::$messages = array_merge($github, $youtube);
     
     if (($collection === false && (!isset($_GET['only']) || $_GET['only'] == 'googleplay'))
         || $collection === "googleplay")
