@@ -61,7 +61,7 @@ class Renderer {
   	$renderers = &$renderers[count($renderers) - 1];
   	while ($entry = readdir($dir_handle)) {
   	  if ($entry != '.' && $entry != '..') {
-  		if (is_file("pages/$dir/$entry")) {
+  		if (is_file("pages/$dir/$entry") && !strstr($entry, "~")) {
   		  if ($renderer = PageRenderer::by_file("$dir/$entry"))
   		    $renderers[] = $renderer;
   		} else
