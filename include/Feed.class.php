@@ -46,7 +46,7 @@ class Feed {
   }
   
   public function render($entries, $collection) {
-    $this->fetch(true);
+    $this->fetch(false);
     $this->process_messages($collection);
     return $this->display_messages($entries, $collection);
   }
