@@ -228,3 +228,7 @@ a.th img {
 .feed tr.entry:hover td.color-strip div {
   display: block;
 }
+
+.feed tr.important {
+  background-color: #D6EFFF;
+}

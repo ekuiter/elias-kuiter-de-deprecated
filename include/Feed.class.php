@@ -14,12 +14,12 @@ class Feed {
   
   function update_cache() {
     $this->fetch_messages();
-    $googleplay = self::$fetched['googleplay'];
     $old = unserialize(file_get_contents($this->message_file));
-    self::$fetched['googleplay'] = $old['googleplay'];
-    foreach ($googleplay as $app)
-      if (!in_array($app, $old['googleplay']))
-        self::$fetched['googleplay'][] = $app;
+    $github = self::$fetched['github'];
+    self::$fetched['github'] = $old['github'];
+    foreach ($github as $event)
+      if (!in_array($event, $old['github']))
+        self::$fetched['github'][] = $event;
     file_put_contents($this->message_file, serialize(self::$fetched));
   }
   
@@ -46,7 +46,7 @@ class Feed {
   }
   
   public function render($entries) {
-    $this->fetch(false);
+    $this->fetch(true);
     $this->process_messages();
     return $this->display_messages($entries);
   }
@@ -88,6 +88,8 @@ class Feed {
         'serviceImg' => '/assets/github.png',
         'buttonLabel' => 'Details'
       );
+      if (in_array($repo, $GLOBALS['excluded_repos']))
+        continue;
       switch ($event->type) {
       case 'PushEvent':
         foreach ($event->payload->commits as $commit) {
@@ -116,6 +118,7 @@ class Feed {
             $message['subject'] = "<strong>$repo</strong> erstellt";
             break;
           }
+          $message['important'] = true;
           $messages[] = $message;
         }
         break;
@@ -128,6 +131,20 @@ class Feed {
           break;
         case 'de':
           $message['subject'] = "<strong>{$event->payload->forkee->name}</strong> geforkt";
+          break;
+        }
+        $message['important'] = true;
+        $messages[] = $message;
+        break;
+      case 'ReleaseEvent':
+        $message['url'] = $event->payload->release->html_url;
+        $message['message'] = "Version {$event->payload->release->tag_name}";
+        switch (Renderer::$language) {
+        case 'en':
+          $message['subject'] = "Released <strong>$repo</strong>";
+          break;
+        case 'de':
+          $message['subject'] = "<strong>$repo</strong> veröffentlicht";
           break;
         }
         $messages[] = $message;
@@ -318,8 +335,9 @@ code;
         $group_id = self::$group_id++;
         $message = $group[$i];
         if ($i == 0) {
+          $important = isset($message['important']) ? "important" : '';
           $output .= <<<code
-            <tr class="entry" onclick="$('#group-$group_id').slideToggle(200)">
+            <tr class="entry $important" onclick="$('#group-$group_id').slideToggle(200)">
               <td class="icon">
                 <img src="$message[serviceImg]" alt="$message[service]" title="$message[service]" width="24" />
               </td>
