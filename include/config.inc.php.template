@@ -6,5 +6,6 @@ $GLOBALS['github_password'] = 'password';
 $GLOBALS['youtube_username'] = 'username';
 $GLOBALS['googleplay_apps'] = array('app1', 'app2');
 $GLOBALS['excluded_repos'] = array('repo1', 'repo2');
-  
+$GLOBALS['backup_password'] = 'password';
+
 ?>

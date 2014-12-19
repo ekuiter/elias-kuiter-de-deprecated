@@ -26,6 +26,13 @@ class Renderer {
   private function dispatch() {
     if (isset($_GET['refetch']))
       (new Feed())->fetch(true);
+    if (isset($_GET['backup']) && $_GET['backup'] === $GLOBALS['backup_password']) {
+      header('Content-Type: text');
+      $file = 'msg.' . date('Y-m-d') . '.dat';
+      header("Content-Disposition: attachment; filename=\"$file\"");
+      readfile((new Feed())->message_file);
+      die;
+    }
     if (isset($_GET['p']))
         $this->page = str_replace('.', '', $_GET['p']);
   	if (isset($_GET['l']))

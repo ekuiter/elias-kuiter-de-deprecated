@@ -1,11 +1,11 @@
 <?php
   
 class Feed {
+  public $message_file = 'include/msg.dat';
   private static $fetched = array();
   private static $messages = array();
   private static $group_id = 0;
   private static $colors = array();
-  private $message_file = 'include/msg.dat';
   
   function create_cache() {
     $this->fetch_messages();
