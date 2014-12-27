@@ -45,7 +45,8 @@ class PageRenderer {
   }
   
   public function image() {
-    return stristr($this->data[2], '.jpg') || stristr($this->data[2], '.png') ? $this->data[2] : null;
+    $image = stristr($this->data[2], '.jpg') || stristr($this->data[2], '.png') ? $this->data[2] : null;
+    return (new Thumbnail($image))->path(350);
   }
   
   public function render() {
