@@ -7,5 +7,7 @@ $GLOBALS['youtube_username'] = 'username';
 $GLOBALS['googleplay_apps'] = array('app1', 'app2');
 $GLOBALS['excluded_repos'] = array('repo1', 'repo2');
 $GLOBALS['backup_password'] = 'password';
+$GLOBALS['allowed_widths'] = array(250, 350);
+$GLOBALS['allowed_heights'] = array();
 
 ?>

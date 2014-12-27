@@ -33,6 +33,17 @@ class Renderer {
       readfile((new Feed())->message_file);
       die;
     }
+    if (isset($_GET['t']) && !empty($_GET['t'])) {
+      try {
+        $maxwidth = isset($_GET['w']) ? (int) $_GET['w'] : 0;
+        $maxheight = isset($_GET['h']) ? (int) $_GET['h'] : 0;
+        if (($maxwidth !== 0 && !in_array($maxwidth, $GLOBALS['allowed_widths'])) ||
+            ($maxheight !== 0 && !in_array($maxheight, $GLOBALS['allowed_heights'])))
+          die;
+        (new Thumbnail($_GET['t']))->render($maxwidth, $maxheight);
+      } catch (Exception $e) { }
+      die;
+    }
     if (isset($_GET['p']))
         $this->page = str_replace('.', '', $_GET['p']);
   	if (isset($_GET['l']))

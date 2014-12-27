@@ -15,6 +15,7 @@ require_once 'include/FolderGrid.class.php';
 require_once 'include/LatestContent.class.php';
 require_once 'include/PageRenderer.class.php';
 require_once 'include/Renderer.class.php';
+require_once 'include/Thumbnail.class.php';
 
 new Renderer();
 

@@ -1,3 +1,5 @@
 .DS_Store
 /include/msg.dat
 /include/config.inc.php
+/assets/**/*.*w.*
+/assets/**/*.*h.*
