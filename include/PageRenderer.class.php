@@ -66,6 +66,11 @@ class PageRenderer {
                   preg_match('|feed\((.*)\)|Uis', $widget[1], $args);
     		  $args = isset($args[1]) ? explode(',', $args[1]) : array();                  
                   $row = (new Feed())->render(isset($args[0]) ? (int) trim($args[0]) : 4, isset($args[1]) ? trim($args[1]) : false);
+                } elseif (strstr($widget[1], 'grid_image')) {
+                  preg_match('|grid_image\((.*)\)|Uis', $widget[1], $args);
+    		  $args = isset($args[1]) ? explode(',', $args[1]) : array();                  
+                  $row = (new GridImage())->render(isset($args[0]) ? trim($args[0]) : "", isset($args[1]) ? trim($args[1]) : "");
+
                 }
   	  }
   	}

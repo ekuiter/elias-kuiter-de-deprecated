@@ -12,6 +12,7 @@ date_default_timezone_set('Europe/Berlin');
 require_once 'include/config.inc.php';
 require_once 'include/Feed.class.php';
 require_once 'include/FolderGrid.class.php';
+require_once 'include/GridImage.class.php';
 require_once 'include/LatestContent.class.php';
 require_once 'include/PageRenderer.class.php';
 require_once 'include/Renderer.class.php';
