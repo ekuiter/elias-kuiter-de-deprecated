@@ -180,7 +180,6 @@ class Renderer {
 		<script type="text/javascript" src="/assets/include/custom.modernizr.js"></script>
 		<script type="text/javascript" src="/assets/include/jquery.min.js"></script>
 		<script type="text/javascript" src="/assets/include/turbolinks.min.js"></script>
-		<script type="text/javascript" src="/assets/include/jwplayer.js"></script>
 		<script type="text/javascript">
 //<![CDATA[
 		var _gaq = _gaq || [];
