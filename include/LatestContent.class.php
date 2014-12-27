@@ -24,7 +24,7 @@ class LatestContent {
         is_object($entry) ? $renderers[] = $entry : 0;
   	}
   	usort($renderers, "PageRenderer::sort_by_$sort_by");
-  	$output = '<ul class="large-block-grid-'.$max.' latest-content">';
+  	$output = '<ul class="small-block-grid-2 large-block-grid-'.$max.' latest-content">';
   	$i = 0;
   	foreach($renderers as $renderer) {
   	  if ($i >= $max)

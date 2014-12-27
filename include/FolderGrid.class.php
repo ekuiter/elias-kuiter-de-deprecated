@@ -16,7 +16,7 @@ class FolderGrid {
     $pages = array();
     $this->get_pages_for_folder_grid(Renderer::$renderers, $pages, $folder);
     @usort($pages, 'PageRenderer::sort_by_order');
-    $output = '<ul class="large-block-grid-3">';
+    $output = '<ul class="small-block-grid-2 large-block-grid-3">';
     foreach($pages as $page) {
       $title = $page->title();
       $link = $page->link();
